@@ -1,5 +1,3 @@
-let color = 'white';
-let grid = ``;
 const boardHeight = 8;
 const boardWidth = 8;
 const numOfCells = boardHeight * boardWidth
@@ -63,6 +61,8 @@ function renderCheckers(board) {
 
 document.addEventListener('DOMContentLoaded', function () {
     let board = document.querySelector('#board');
+    let color = 'white';
+    let grid = ``;
     for (let i = 0; i < numOfCells; i++) {
         grid += `<div class="${color} cell" id="${i}"></div>`;
         if (color === 'white') {
