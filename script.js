@@ -1,3 +1,5 @@
+// Used for setting up the board and rendering the checkers
+// Also used for the instructions modal
 const boardHeight = 8;
 const boardWidth = 8;
 const numOfCells = boardHeight * boardWidth
@@ -59,6 +61,7 @@ function renderCheckers(board) {
     }
 }
 
+// runs when the DOM is loaded
 document.addEventListener('DOMContentLoaded', function () {
     let board = document.querySelector('#board');
     let color = 'white';
@@ -92,3 +95,74 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('instructions-modal').classList.toggle('show');
     })
 })
+
+// For checking which cell is clicked
+// 0 - 7
+// 8 - 15
+// 16 - 23
+// ...63
+
+// to find the position in the array
+function findPosition(cell) {
+    let x = cell % 8;
+    let y = Math.floor(cell / 8);
+    return [x, y];
+}
+
+function activePieceColorSwap(flip, event) {
+    activeSelectionInterval = setInterval(() => {
+        if (flip === 0) {
+            document.getElementById(event.target.id).style.color = 'red';
+            flip = 1;
+        } else if (flip === 1) {
+            document.getElementById(event.target.id).style.color = 'blue';
+            flip = 0;
+        }
+    }, 500);
+}
+
+
+let turn = 'white';
+let activePiece = null;
+let activePieceIndex = null;
+let previousCell = null;
+let activeSelectionInterval = null;
+
+document.addEventListener('click', function (event) {
+    if (event.target.classList.contains('cell') && activePiece === null) {
+        activePiece = document.getElementById(event.target.id).innerText.toLowerCase();
+        previousCell = parseInt(event.target.id);
+        console.log(findPosition(previousCell));
+        let flip = 0;
+        if (activePiece === 'white' && turn === 'white') {
+            activePieceColorSwap(flip, event);
+        } else if (activePiece === 'black' && turn === 'black') {
+            activePieceColorSwap(flip, event);
+        }
+    } else if ((event.target.classList.contains('cell') && activePiece !== null)) {
+        if (turn === 'white') {
+            if (activePiece === 'white' && document.getElementById(event.target.id).innerText === '') {
+                document.getElementById(event.target.id).innerText = 'White';
+                document.getElementById(previousCell).innerText = '';
+                activePiece = null;
+                previousCell = null;
+                turn = 'black';
+            } else if (activePiece === 'black') {
+                activePiece = null;
+                previousCell = null;
+            }
+        } else if (turn === 'black') {
+            if (activePiece === 'black' && document.getElementById(event.target.id).innerText === '') {
+                document.getElementById(event.target.id).innerText = 'Black';
+                document.getElementById(previousCell).innerText = '';
+                activePiece = null;
+                previousCell = null;
+                turn = 'white';
+            } else if (activePiece === 'white') {
+                activePiece = null;
+                previousCell = null;
+            }
+        }
+        clearInterval(activeSelectionInterval); // Clear the interval whenever the active piece is reset
+    }
+});
