@@ -121,6 +121,10 @@ function activePieceColorSwap(flip, event) {
     }, 500);
 }
 
+function setTurn(turn) {
+    document.getElementById('turn').innerText = `${turn}`;
+}
+
 
 let turn = 'white';
 let activePiece = null;
@@ -164,5 +168,6 @@ document.addEventListener('click', function (event) {
             }
         }
         clearInterval(activeSelectionInterval); // Clear the interval whenever the active piece is reset
+        setTurn(turn);
     }
 });

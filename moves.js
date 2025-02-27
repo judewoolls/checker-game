@@ -1,1 +1,1 @@
-console.log('Moves loaded')
+document.querySelector('turn-indicator').innerText = 'White\'s turn';
