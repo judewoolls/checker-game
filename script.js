@@ -67,10 +67,8 @@ document.addEventListener('DOMContentLoaded', function () {
         grid += `<div class="${color} cell" id="${i}"></div>`;
         if (color === 'white') {
             color = 'black';
-            console.log('black')
         } else if (color === 'black') {
             color = 'white';
-            console.log('white')
         }
         if ((i + 1) % 8 === 0) {
             if (color === 'white') {
