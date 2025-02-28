@@ -125,6 +125,13 @@ function setTurn(turn) {
     document.getElementById('turn').innerText = `${turn}`;
 }
 
+function updateArray(cell) {
+    let {x, y} = findPosition(cell);
+    boardArray[y][x] = turn;
+    x,y = findPosition(previousCell);
+    boardArray[y][x] = 0;
+}
+
 
 let turn = 'white';
 let activePiece = null;
