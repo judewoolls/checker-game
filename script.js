@@ -130,7 +130,7 @@ function unselectPiece() {
 }
 
 // Renders whose turn it is to the screen
-function setTurn(turn) {
+function displayTurn(turn) {
     document.getElementById('turn').innerText = `${turn}`;
 }
 
@@ -155,7 +155,6 @@ let activeSelectionInterval = null;
 let flip = 0;
 
 // Game logic that is checked whenever there is a click on the screen
-
 document.addEventListener('click', function (event) { // change this to only when board is clicked
     if (event.target.classList.contains('cell') && activePiece === null) {
         activePiece = document.getElementById(event.target.id).innerText.toLowerCase();
@@ -196,6 +195,6 @@ document.addEventListener('click', function (event) { // change this to only whe
             }
         }
         clearInterval(activeSelectionInterval); // Clear the interval whenever the active piece is reset
-        setTurn(turn);
+        displayTurn(turn);
     }
 });
