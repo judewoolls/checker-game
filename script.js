@@ -53,11 +53,11 @@ function renderCheckers(board) {
             if (board[row][col] === 1) {
                 item = document.getElementById(`${counter}`)
                 item.innerText = 'White'
-            }  else if (board[row][col] === 2) {
+            } else if (board[row][col] === 2) {
                 item = document.getElementById(`${counter}`)
                 item.innerText = 'Black'
             }
-        counter++;
+            counter++;
         }
     }
 }
@@ -136,14 +136,31 @@ function displayTurn(turn) {
 
 // Updates the array after a move 
 function updateArray(cell) {
-    let {x, y} = findPosition(cell);
+    let { x, y } = findPosition(cell);
     if (turn === 'white') {
         boardArray[y][x] = 1;
     } else {
         boardArray[y][x] = 2;
     }
-    x,y = findPosition(previousCell);
+    x, y = findPosition(previousCell);
     boardArray[y][x] = 0;
+}
+
+/* 
+ if its on the row above and 
+*/
+
+// valid black move  -- So diagonally up left or right
+function validBlackMove(board, cell) {
+    startPosition = findPosition(previousCell)
+    endPosition = findPosition(cell)
+    // check the y value first
+    if (endPosition[1] === (startPosition[1] + 1)) {
+        // check the correct x value
+        if (endPosition[0] === (startPosition[0] + 1) || endPosition[0] === (startPosition[0] - 1)) {
+            console.log('valid move');
+        }
+    }
 }
 
 // Game variables
