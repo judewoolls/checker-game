@@ -53,9 +53,11 @@ function renderCheckers(board) {
             if (board[row][col] === 1) {
                 item = document.getElementById(`${counter}`)
                 item.innerText = 'White'
+                item.style.color = 'Orange';
             } else if (board[row][col] === 2) {
                 item = document.getElementById(`${counter}`)
                 item.innerText = 'Black'
+                item.style.color = 'Orange';
             }
             counter++;
         }
@@ -199,42 +201,39 @@ document.addEventListener('click', function (event) { // change this to only whe
     } else if ((event.target.classList.contains('cell') && activePiece !== null)) {
         if (turn === 'white') {
             if (activePiece === 'white' && document.getElementById(event.target.id).innerText === '') {
-                /* 
-                check for a valid move
-                */
-               if (validWhiteMove) {
-                // change the display
-                document.getElementById(event.target.id).innerText = 'White';
-                document.getElementById(previousCell).innerText = '';
-                updateArray(event.target.id); // should update the array after a move 
-                unselectPiece();
-                turn = 'black';
-               } else {
-                unselectPiece();
-               }
+                // check for valid move
+                if (validWhiteMove) {
+                    // change the display
+                    document.getElementById(event.target.id).innerText = 'White';
+                    document.getElementById(previousCell).innerText = '';
+                    updateArray(event.target.id); // should update the array after a move 
+                    unselectPiece();
+                    turn = 'black';
+                } else {
+                    unselectPiece();
+                }
             } else if (activePiece === 'black') {
                 unselectPiece();
             }
         } else if (turn === 'black') {
             if (activePiece === 'black' && document.getElementById(event.target.id).innerText === '') {
-                /* 
-                check for a valid move
-                */
-               if (validBlackMove) {
-                // change the display
-                document.getElementById(event.target.id).innerText = 'Black';
-                document.getElementById(previousCell).innerText = '';
-                updateArray(event.target.id); // should update array after a move
-                unselectPiece()
-                turn = 'white';
-               } else {
-                unselectPiece();
-               }
+                // check for valid move
+                if (validBlackMove) {
+                    // change the display
+                    document.getElementById(event.target.id).innerText = 'Black';
+                    document.getElementById(previousCell).innerText = '';
+                    updateArray(event.target.id); // should update array after a move
+                    unselectPiece()
+                    turn = 'white';
+                } else {
+                    unselectPiece();
+                }
             } else if (activePiece === 'white') {
                 unselectPiece();
             }
         }
         clearInterval(activeSelectionInterval); // Clear the interval whenever the active piece is reset
         displayTurn(turn);
+        renderCheckers(boardArray);
     }
 });
