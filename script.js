@@ -1,5 +1,4 @@
-// Used for setting up the board and rendering the checkers
-// Also used for the instructions modal
+// The main js script
 const boardHeight = 8;
 const boardWidth = 8;
 const numOfCells = boardHeight * boardWidth
@@ -148,34 +147,46 @@ function updateArray(cell) {
     boardArray[y][x] = 0;
 }
 
-/* 
- if its on the row above and 
-*/
 
-// valid black move  -- So diagonally up left or right
+
+// valid black move  -- So diagonally up left or right  up is minus
 function validBlackMove(board, cell) {
-    startPosition = findPosition(previousCell)
-    endPosition = findPosition(cell)
-    // check the y value first
-    if (endPosition[1] === (startPosition[1] + 1)) {
-        // check the correct x value
-        if (endPosition[0] === (startPosition[0] + 1) || endPosition[0] === (startPosition[0] - 1)) {
-            console.log('valid BLACK move');
-        }
-    }
-}
-
-// valid white move  -- So diagonally up left or right
-function validWhiteMove(board, cell) {
     startPosition = findPosition(previousCell)
     endPosition = findPosition(cell)
     // check the y value first
     if (endPosition[1] === (startPosition[1] - 1)) {
         // check the correct x value
         if (endPosition[0] === (startPosition[0] + 1) || endPosition[0] === (startPosition[0] - 1)) {
-            console.log('valid WHITE move');
+            console.log('valid BLACK move');
+            return true;
+        }
+    } else if (endPosition[1] === (startPosition[1] + 2)) {
+        if (endPosition[0] === (startPosition[0] + 2) || endPosition[0] === (startPosition[0] - 2)) {
+            if (endPosition[0] - startPosition[0] < 0) {
+                // check if there is an opposition piece  OR  another easier way might be to create a list of available moves for a piece each time a piece is selected
+                if (board[startPosition[1]+1][startPosition[0]-1] === 1) {
+                    console.log('valid BLACK move');
+                    return true;
+                } 
+            }
         }
     }
+    return false;
+}
+
+// valid white move  -- So diagonally down left or right
+function validWhiteMove(board, cell) {
+    startPosition = findPosition(previousCell)
+    endPosition = findPosition(cell)
+    // check the y value first
+    if (endPosition[1] === (startPosition[1] + 1)) {
+        // check the correct x value
+        if (endPosition[0] === (startPosition[0] + 1) || endPosition[0] === (startPosition[0] - 1)) {
+            console.log('valid WHITE move');
+            return true;
+        }
+    }
+    return false;
 }
 
 // Game variables
