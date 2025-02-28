@@ -162,12 +162,14 @@ function validBlackMove(board, cell) {
         }
     } else if (endPosition[1] === (startPosition[1] + 2)) {
         if (endPosition[0] === (startPosition[0] + 2) || endPosition[0] === (startPosition[0] - 2)) {
-            if (endPosition[0] - startPosition[0] < 0) {
+            if (endPosition[0] - startPosition[0] < 0) { // checks moves to the left
                 // check if there is an opposition piece  OR  another easier way might be to create a list of available moves for a piece each time a piece is selected
                 if (board[startPosition[1]+1][startPosition[0]-1] === 1) {
                     console.log('valid BLACK move');
                     return true;
-                } else if (board[startPosition[1]+1][startPosition[0]+1] === 1) {
+                } 
+            } else if (endPosition[0] - startPosition[0] > 0) { // checks moves to the right
+                if (board[startPosition[1]+1][startPosition[0]+1] === 1) {
                     console.log('valid BLACK move');
                     return true;
                 } 
