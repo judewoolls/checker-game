@@ -158,7 +158,20 @@ function validBlackMove(board, cell) {
     if (endPosition[1] === (startPosition[1] + 1)) {
         // check the correct x value
         if (endPosition[0] === (startPosition[0] + 1) || endPosition[0] === (startPosition[0] - 1)) {
-            console.log('valid move');
+            console.log('valid BLACK move');
+        }
+    }
+}
+
+// valid white move  -- So diagonally up left or right
+function validWhiteMove(board, cell) {
+    startPosition = findPosition(previousCell)
+    endPosition = findPosition(cell)
+    // check the y value first
+    if (endPosition[1] === (startPosition[1] - 1)) {
+        // check the correct x value
+        if (endPosition[0] === (startPosition[0] + 1) || endPosition[0] === (startPosition[0] - 1)) {
+            console.log('valid WHITE move');
         }
     }
 }
@@ -186,27 +199,37 @@ document.addEventListener('click', function (event) { // change this to only whe
     } else if ((event.target.classList.contains('cell') && activePiece !== null)) {
         if (turn === 'white') {
             if (activePiece === 'white' && document.getElementById(event.target.id).innerText === '') {
-                document.getElementById(event.target.id).innerText = 'White';
-                document.getElementById(previousCell).innerText = '';
                 /* 
                 check for a valid move
                 */
+               if (validWhiteMove) {
+                // change the display
+                document.getElementById(event.target.id).innerText = 'White';
+                document.getElementById(previousCell).innerText = '';
                 updateArray(event.target.id); // should update the array after a move 
                 unselectPiece();
                 turn = 'black';
+               } else {
+                unselectPiece();
+               }
             } else if (activePiece === 'black') {
                 unselectPiece();
             }
         } else if (turn === 'black') {
             if (activePiece === 'black' && document.getElementById(event.target.id).innerText === '') {
-                document.getElementById(event.target.id).innerText = 'Black';
-                document.getElementById(previousCell).innerText = '';
                 /* 
                 check for a valid move
                 */
+               if (validBlackMove) {
+                // change the display
+                document.getElementById(event.target.id).innerText = 'Black';
+                document.getElementById(previousCell).innerText = '';
                 updateArray(event.target.id); // should update array after a move
                 unselectPiece()
                 turn = 'white';
+               } else {
+                unselectPiece();
+               }
             } else if (activePiece === 'white') {
                 unselectPiece();
             }
