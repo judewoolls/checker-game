@@ -123,14 +123,25 @@ function activePieceColorSwap(flip, event) {
     }, 500);
 }
 
+// used when unselecting a piece is required
+function unselectPiece() {
+    activePiece = null;
+    previousCell = null;
+}
+
 // Renders whose turn it is to the screen
 function setTurn(turn) {
     document.getElementById('turn').innerText = `${turn}`;
 }
 
+// Updates the array after a move 
 function updateArray(cell) {
     let {x, y} = findPosition(cell);
-    boardArray[y][x] = turn;
+    if (turn === 'white') {
+        boardArray[y][x] = 1;
+    } else {
+        boardArray[y][x] = 2;
+    }
     x,y = findPosition(previousCell);
     boardArray[y][x] = 0;
 }
@@ -141,14 +152,16 @@ let activePiece = null;
 let activePieceIndex = null;
 let previousCell = null;
 let activeSelectionInterval = null;
+let flip = 0;
 
 // Game logic that is checked whenever there is a click on the screen
-document.addEventListener('click', function (event) {
+
+document.addEventListener('click', function (event) { // change this to only when board is clicked
     if (event.target.classList.contains('cell') && activePiece === null) {
         activePiece = document.getElementById(event.target.id).innerText.toLowerCase();
         previousCell = parseInt(event.target.id);
         console.log(findPosition(previousCell));
-        let flip = 0;
+        flip = 0;
         if (activePiece === 'white' && turn === 'white') {
             activePieceColorSwap(flip, event);
         } else if (activePiece === 'black' && turn === 'black') {
@@ -159,23 +172,27 @@ document.addEventListener('click', function (event) {
             if (activePiece === 'white' && document.getElementById(event.target.id).innerText === '') {
                 document.getElementById(event.target.id).innerText = 'White';
                 document.getElementById(previousCell).innerText = '';
-                activePiece = null;
-                previousCell = null;
+                /* 
+                check for a valid move
+                */
+                updateArray(event.target.id); // should update the array after a move 
+                unselectPiece();
                 turn = 'black';
             } else if (activePiece === 'black') {
-                activePiece = null;
-                previousCell = null;
+                unselectPiece();
             }
         } else if (turn === 'black') {
             if (activePiece === 'black' && document.getElementById(event.target.id).innerText === '') {
                 document.getElementById(event.target.id).innerText = 'Black';
                 document.getElementById(previousCell).innerText = '';
-                activePiece = null;
-                previousCell = null;
+                /* 
+                check for a valid move
+                */
+                updateArray(event.target.id); // should update array after a move
+                unselectPiece()
                 turn = 'white';
             } else if (activePiece === 'white') {
-                activePiece = null;
-                previousCell = null;
+                unselectPiece();
             }
         }
         clearInterval(activeSelectionInterval); // Clear the interval whenever the active piece is reset
