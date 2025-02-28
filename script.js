@@ -167,6 +167,9 @@ function validBlackMove(board, cell) {
                 if (board[startPosition[1]+1][startPosition[0]-1] === 1) {
                     console.log('valid BLACK move');
                     return true;
+                } else if (board[startPosition[1]+1][startPosition[0]+1] === 1) {
+                    console.log('valid BLACK move');
+                    return true;
                 } 
             }
         }
