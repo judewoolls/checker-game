@@ -4,6 +4,7 @@ const boardHeight = 8;
 const boardWidth = 8;
 const numOfCells = boardHeight * boardWidth
 
+// sets up the initial empty board array
 function setUpBoardArray(height, width) {
     const boardArray = [];
     for (let y = 0; y < height; y++) {
@@ -15,7 +16,7 @@ function setUpBoardArray(height, width) {
     }
     return boardArray;
 }
-
+// Sets up white checkers
 function populateWhite(board, i, j) {
     if (i === 0 && j % 2 !== 0) {
         board[i][j] = 1;
@@ -25,7 +26,7 @@ function populateWhite(board, i, j) {
         board[i][j] = 1;
     }
 }
-
+// Sets up black checkers
 function populateBlack(board, i, j) {
     if (i === 5 && j % 2 !== 1) {
         board[i][j] = 2;
@@ -35,7 +36,7 @@ function populateBlack(board, i, j) {
         board[i][j] = 2;
     }
 }
-
+// Sets up the Checkers to the starting position
 function populateBoard(board) {
     for (let i = 0; i < boardHeight; i++) {
         for (let j = 0; j < boardWidth; j++) {
@@ -44,7 +45,7 @@ function populateBoard(board) {
         }
     }
 }
-
+// Renders the board
 function renderCheckers(board) {
     let counter = 0;
     for (let row = 0; row < boardHeight; row++) {
@@ -109,6 +110,7 @@ function findPosition(cell) {
     return [x, y];
 }
 
+// used to change the color of the piece that the user has selected to move
 function activePieceColorSwap(flip, event) {
     activeSelectionInterval = setInterval(() => {
         if (flip === 0) {
@@ -121,6 +123,7 @@ function activePieceColorSwap(flip, event) {
     }, 500);
 }
 
+// Renders whose turn it is to the screen
 function setTurn(turn) {
     document.getElementById('turn').innerText = `${turn}`;
 }
@@ -132,13 +135,14 @@ function updateArray(cell) {
     boardArray[y][x] = 0;
 }
 
-
+// Game variables
 let turn = 'white';
 let activePiece = null;
 let activePieceIndex = null;
 let previousCell = null;
 let activeSelectionInterval = null;
 
+// Game logic that is checked whenever there is a click on the screen
 document.addEventListener('click', function (event) {
     if (event.target.classList.contains('cell') && activePiece === null) {
         activePiece = document.getElementById(event.target.id).innerText.toLowerCase();
