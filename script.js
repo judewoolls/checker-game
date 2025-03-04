@@ -2,10 +2,10 @@
 const boardHeight = 8;
 const boardWidth = 8;
 const numOfCells = boardHeight * boardWidth
+const boardArray = [];
 
 // sets up the initial empty board array
 function setUpBoardArray(height, width) {
-    const boardArray = [];
     for (let y = 0; y < height; y++) {
         let row = [];
         for (let x = 0; x < width; x++) {
@@ -136,18 +136,16 @@ function displayTurn(turn) {
 }
 
 // Updates the array after a move 
-function updateArray(cell) {
-    let { x, y } = findPosition(cell);
-    if (turn === 'white') {
+function updateArray(cell, currentTurn) {
+    let [x, y] = findPosition(cell);
+    if (currentTurn === 'white') {
         boardArray[y][x] = 1;
     } else {
         boardArray[y][x] = 2;
     }
-    x, y = findPosition(previousCell);
-    boardArray[y][x] = 0;
+    let [prevX, prevY] = findPosition(previousCell);
+    boardArray[prevY][prevX] = 0;
 }
-
-
 
 // valid black move  -- So diagonally up left or right  up is minus
 function validBlackMove(board, cell) {
@@ -207,47 +205,44 @@ let activeSelectionInterval = null;
 let flip = 0;
 
 // Game logic that is checked whenever there is a click on the screen
-document.addEventListener('click', function (event) { // change this to only when board is clicked
+document.addEventListener('click', function (event) {
     if (event.target.classList.contains('cell') && activePiece === null) {
         activePiece = document.getElementById(event.target.id).innerText.toLowerCase();
         previousCell = parseInt(event.target.id);
-        console.log(findPosition(previousCell));
         flip = 0;
         if (activePiece === 'white' && turn === 'white') {
             activePieceColorSwap(flip, event);
         } else if (activePiece === 'black' && turn === 'black') {
             activePieceColorSwap(flip, event);
+        } else {
+            unselectPiece();
         }
-    } else if ((event.target.classList.contains('cell') && activePiece !== null)) {
+    } else if (event.target.classList.contains('cell') && activePiece !== null) {
         if (turn === 'white') {
             if (activePiece === 'white' && document.getElementById(event.target.id).innerText === '') {
                 // check for valid move
-                if (validWhiteMove) {
+                if (validWhiteMove(boardArray, parseInt(event.target.id))) {
                     // change the display
                     document.getElementById(event.target.id).innerText = 'White';
                     document.getElementById(previousCell).innerText = '';
-                    updateArray(event.target.id); // should update the array after a move 
-                    unselectPiece();
+                    updateArray(event.target.id, turn); // should update the array after a move 
                     turn = 'black';
-                } else {
-                    unselectPiece();
                 }
+                unselectPiece();
             } else if (activePiece === 'black') {
                 unselectPiece();
             }
         } else if (turn === 'black') {
             if (activePiece === 'black' && document.getElementById(event.target.id).innerText === '') {
                 // check for valid move
-                if (validBlackMove) {
+                if (validBlackMove(boardArray, parseInt(event.target.id))) {
                     // change the display
                     document.getElementById(event.target.id).innerText = 'Black';
                     document.getElementById(previousCell).innerText = '';
-                    updateArray(event.target.id); // should update array after a move
-                    unselectPiece()
+                    updateArray(event.target.id, turn); // should update array after a move
                     turn = 'white';
-                } else {
-                    unselectPiece();
                 }
+                unselectPiece();
             } else if (activePiece === 'white') {
                 unselectPiece();
             }
@@ -255,5 +250,6 @@ document.addEventListener('click', function (event) { // change this to only whe
         clearInterval(activeSelectionInterval); // Clear the interval whenever the active piece is reset
         displayTurn(turn);
         renderCheckers(boardArray);
+        console.log(boardArray);
     }
 });
