@@ -57,6 +57,9 @@ function renderCheckers(board) {
                 item = document.getElementById(`${counter}`)
                 item.innerText = 'Black'
                 item.style.color = 'Orange';
+            } else {
+                item = document.getElementById(`${counter}`);
+                item.innerText = '';
             }
             counter++;
         }
@@ -95,6 +98,15 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('instructions-close').addEventListener('click', function () {
         document.getElementById('instructions-modal').classList.toggle('hidden');
         document.getElementById('instructions-modal').classList.toggle('show');
+    })
+    document.getElementById('reset-button').addEventListener('click', function () {
+        // Clear the boardArray
+        boardArray.length = 0;
+        setUpBoardArray(boardHeight, boardWidth);
+        populateBoard(boardArray);
+        renderCheckers(boardArray); 
+        turn = 'white';
+        displayTurn(turn);
     })
 })
 
