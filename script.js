@@ -206,7 +206,7 @@ function validBlackMove(cell) {
         // check the correct x value
         if (endPosition[0] === (startPosition[0] + 1) || endPosition[0] === (startPosition[0] - 1)) {
             console.log('valid BLACK move');
-            return true;
+            return 'move';
         }
     } else if (endPosition[1] === (startPosition[1] - 2)) { // check for jump move
         if (endPosition[0] === (startPosition[0] + 2) || endPosition[0] === (startPosition[0] - 2)) {
@@ -216,14 +216,14 @@ function validBlackMove(cell) {
                     // remove opposing piece
                     removePiece((startPosition[1] - 1) * 8 + (startPosition[0] - 1));
                     console.log('valid BLACK move');
-                    return true;
+                    return 'take';
                 }
             } else if (endPosition[0] - startPosition[0] > 0) { // checks moves to the right
                 if (boardArray[startPosition[1] - 1][startPosition[0] + 1] === 1 && boardArray[endPosition[1]][endPosition[0]] === 0) {
                     // remove the opposing piece
                     removePiece((startPosition[1] - 1) * 8 + (startPosition[0] + 1));
                     console.log('valid BLACK move');
-                    return true;
+                    return 'take';
                 }
             }
         }
@@ -241,7 +241,7 @@ function validWhiteMove(cell) {
         // check the correct x value
         if (endPosition[0] === (startPosition[0] + 1) || endPosition[0] === (startPosition[0] - 1)) {
             console.log('valid WHITE move');
-            return true;
+            return 'move';
         }
     } else if (endPosition[1] === (startPosition[1] + 2)) { // check for jump move
         if (endPosition[0] === (startPosition[0] + 2) || endPosition[0] === (startPosition[0] - 2)) {
@@ -251,14 +251,14 @@ function validWhiteMove(cell) {
                     // remove opposing piece
                     removePiece((startPosition[1] + 1) * 8 + (startPosition[0] - 1));
                     console.log('valid WHITE move');
-                    return true;
+                    return 'take';
                 }
             } else if (endPosition[0] - startPosition[0] > 0) { // checks moves to the right
                 if (boardArray[startPosition[1] + 1][startPosition[0] + 1] === 2 && boardArray[endPosition[1]][endPosition[0]] === 0) {
                     // remove the opposing piece
                     removePiece((startPosition[1] + 1) * 8 + (startPosition[0] + 1));
                     console.log('valid WHITE move');
-                    return true;
+                    return 'take';
                 }
             }
         }
@@ -288,15 +288,19 @@ document.addEventListener('click', function (event) {
             unselectPiece();
         }
     } else if (event.target.classList.contains('cell') && activePiece !== null) {
+        let moveResult = false;
         if (turn === 'white') {
             if (activePiece === 'white' && document.getElementById(event.target.id).innerText === '') {
                 // check for valid move
-                if (validWhiteMove(parseInt(event.target.id))) {
+                moveResult = validWhiteMove(parseInt(event.target.id));
+                if (moveResult) {
                     // change the display
                     document.getElementById(event.target.id).innerText = 'White';
                     document.getElementById(previousCell).innerText = '';
                     updateArray(event.target.id, turn); // should update the array after a move 
-                    turn = 'black';
+                    if (moveResult !== 'take') {
+                        turn = 'black';
+                    }
                 }
                 unselectPiece();
             } else if (activePiece === 'black') {
@@ -305,12 +309,15 @@ document.addEventListener('click', function (event) {
         } else if (turn === 'black') {
             if (activePiece === 'black' && document.getElementById(event.target.id).innerText === '') {
                 // check for valid move
-                if (validBlackMove(parseInt(event.target.id))) {
+                moveResult = validBlackMove(parseInt(event.target.id));
+                if (moveResult) {
                     // change the display
                     document.getElementById(event.target.id).innerText = 'Black';
                     document.getElementById(previousCell).innerText = '';
                     updateArray(event.target.id, turn); // should update array after a move
-                    turn = 'white';
+                    if (moveResult !== 'take') {
+                        turn = 'white';
+                    }
                 }
                 unselectPiece();
             } else if (activePiece === 'white') {
