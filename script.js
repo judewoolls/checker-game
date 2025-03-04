@@ -151,6 +151,7 @@ function removePiece(cell) {
     // remove the piece from the board
     const position = findPosition(cell);
     boardArray[position[1]][position[0]] = 0;
+    document.getElementById(cell).innerText = '';
 }
 
 // valid black move  -- So diagonally up left or right  up is minus
@@ -171,14 +172,14 @@ function validBlackMove(cell) {
                 // check if there is an opposition piece and the landing spot is empty
                 if (boardArray[startPosition[1] - 1][startPosition[0] - 1] === 1 && boardArray[endPosition[1]][endPosition[0]] === 0) {
                     // remove opposing piece
-                    removePiece(board, (startPosition[1] - 1) * 8 + startPosition[0] - 1);
+                    removePiece((startPosition[1] - 1) * 8 + (startPosition[0] - 1));
                     console.log('valid BLACK move');
                     return true;
                 }
             } else if (endPosition[0] - startPosition[0] > 0) { // checks moves to the right
                 if (boardArray[startPosition[1] - 1][startPosition[0] + 1] === 1 && boardArray[endPosition[1]][endPosition[0]] === 0) {
                     // remove the opposing piece
-                    removePiece((startPosition[1] - 1) * 8 + startPosition[0] + 1);
+                    removePiece((startPosition[1] - 1) * 8 + (startPosition[0] + 1));
                     console.log('valid BLACK move');
                     return true;
                 }
