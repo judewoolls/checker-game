@@ -154,6 +154,25 @@ function removePiece(cell) {
     document.getElementById(cell).innerText = '';
 }
 
+function checkForWinner() {
+    let whiteCount = 0;
+    let blackCount = 0;
+    for (let i = 0; i < boardHeight; i++) {
+        for (let j = 0; j < boardWidth; j++) {
+            if (boardArray[i][j] === 1) {
+                whiteCount++;
+            } else if (boardArray[i][j] === 2) {
+                blackCount++;
+            }
+        }
+    }
+    if (whiteCount === 0) {
+        alert('Black wins!');
+    } else if (blackCount === 0) {
+        alert('White wins!');
+    }
+}
+
 // valid black move  -- So diagonally up left or right  up is minus
 function validBlackMove(cell) {
     let startPosition = findPosition(previousCell);
@@ -280,4 +299,5 @@ document.addEventListener('click', function (event) {
         renderCheckers(boardArray);
         console.log(boardArray);
     }
+    checkForWinner();
 });
