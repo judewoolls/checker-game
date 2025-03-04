@@ -147,10 +147,17 @@ function updateArray(cell, currentTurn) {
     boardArray[prevY][prevX] = 0;
 }
 
+function removePiece(cell) {
+    // remove the piece from the board
+    const position = findPosition(cell);
+    boardArray[position[1]][position[0]] = 0;
+}
+
 // valid black move  -- So diagonally up left or right  up is minus
-function validBlackMove(board, cell) {
-    startPosition = findPosition(previousCell)
-    endPosition = findPosition(cell)
+function validBlackMove(cell) {
+    let startPosition = findPosition(previousCell);
+    let endPosition = findPosition(cell);
+
     // check the y value first
     if (endPosition[1] === (startPosition[1] - 1)) {
         // check the correct x value
@@ -158,23 +165,23 @@ function validBlackMove(board, cell) {
             console.log('valid BLACK move');
             return true;
         }
-    } else if (endPosition[1] === (startPosition[1] + 2)) { /** might need to adjust to check direction first */
+    } else if (endPosition[1] === (startPosition[1] - 2)) { // check for jump move
         if (endPosition[0] === (startPosition[0] + 2) || endPosition[0] === (startPosition[0] - 2)) {
             if (endPosition[0] - startPosition[0] < 0) { // checks moves to the left
-                // check if there is an opposition piece  OR  another easier way might be to create a list of available moves for a piece each time a piece is selected
-                if (board[startPosition[1]+1][startPosition[0]-1] === 1) {
+                // check if there is an opposition piece and the landing spot is empty
+                if (boardArray[startPosition[1] - 1][startPosition[0] - 1] === 1 && boardArray[endPosition[1]][endPosition[0]] === 0) {
                     // remove opposing piece
-                    board[startPosition[1]+1][startPosition[0]-1] = 0;
+                    removePiece(board, (startPosition[1] - 1) * 8 + startPosition[0] - 1);
                     console.log('valid BLACK move');
                     return true;
-                } 
+                }
             } else if (endPosition[0] - startPosition[0] > 0) { // checks moves to the right
-                if (board[startPosition[1]+1][startPosition[0]+1] === 1) {
+                if (boardArray[startPosition[1] - 1][startPosition[0] + 1] === 1 && boardArray[endPosition[1]][endPosition[0]] === 0) {
                     // remove the opposing piece
-                    board[startPosition[1]+1][startPosition[0]+1] = 0;
+                    removePiece((startPosition[1] - 1) * 8 + startPosition[0] + 1);
                     console.log('valid BLACK move');
                     return true;
-                } 
+                }
             }
         }
     }
@@ -182,7 +189,7 @@ function validBlackMove(board, cell) {
 }
 
 // valid white move  -- So diagonally down left or right
-function validWhiteMove(board, cell) {
+function validWhiteMove(cell) {
     startPosition = findPosition(previousCell)
     endPosition = findPosition(cell)
     // check the y value first
@@ -221,7 +228,7 @@ document.addEventListener('click', function (event) {
         if (turn === 'white') {
             if (activePiece === 'white' && document.getElementById(event.target.id).innerText === '') {
                 // check for valid move
-                if (validWhiteMove(boardArray, parseInt(event.target.id))) {
+                if (validWhiteMove(parseInt(event.target.id))) {
                     // change the display
                     document.getElementById(event.target.id).innerText = 'White';
                     document.getElementById(previousCell).innerText = '';
@@ -235,7 +242,7 @@ document.addEventListener('click', function (event) {
         } else if (turn === 'black') {
             if (activePiece === 'black' && document.getElementById(event.target.id).innerText === '') {
                 // check for valid move
-                if (validBlackMove(boardArray, parseInt(event.target.id))) {
+                if (validBlackMove(parseInt(event.target.id))) {
                     // change the display
                     document.getElementById(event.target.id).innerText = 'Black';
                     document.getElementById(previousCell).innerText = '';
