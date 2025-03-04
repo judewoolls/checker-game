@@ -191,14 +191,34 @@ function validBlackMove(cell) {
 
 // valid white move  -- So diagonally down left or right
 function validWhiteMove(cell) {
-    startPosition = findPosition(previousCell)
-    endPosition = findPosition(cell)
+    let startPosition = findPosition(previousCell);
+    let endPosition = findPosition(cell);
+
     // check the y value first
     if (endPosition[1] === (startPosition[1] + 1)) {
         // check the correct x value
         if (endPosition[0] === (startPosition[0] + 1) || endPosition[0] === (startPosition[0] - 1)) {
             console.log('valid WHITE move');
             return true;
+        }
+    } else if (endPosition[1] === (startPosition[1] + 2)) { // check for jump move
+        if (endPosition[0] === (startPosition[0] + 2) || endPosition[0] === (startPosition[0] - 2)) {
+            if (endPosition[0] - startPosition[0] < 0) { // checks moves to the left
+                // check if there is an opposition piece and the landing spot is empty
+                if (boardArray[startPosition[1] + 1][startPosition[0] - 1] === 2 && boardArray[endPosition[1]][endPosition[0]] === 0) {
+                    // remove opposing piece
+                    removePiece((startPosition[1] + 1) * 8 + (startPosition[0] - 1));
+                    console.log('valid WHITE move');
+                    return true;
+                }
+            } else if (endPosition[0] - startPosition[0] > 0) { // checks moves to the right
+                if (boardArray[startPosition[1] + 1][startPosition[0] + 1] === 2 && boardArray[endPosition[1]][endPosition[0]] === 0) {
+                    // remove the opposing piece
+                    removePiece((startPosition[1] + 1) * 8 + (startPosition[0] + 1));
+                    console.log('valid WHITE move');
+                    return true;
+                }
+            }
         }
     }
     return false;
