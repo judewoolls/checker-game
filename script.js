@@ -100,7 +100,10 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('instructions-modal').classList.toggle('show');
     })
     document.getElementById('reset-button').addEventListener('click', function () {
-        // Clear the boardArray
+        // hide the modal
+        document.getElementById('gameOver-modal').classList.toggle('hidden');
+        document.getElementById('gameOver-modal').classList.toggle('show');
+        // clear the board array
         boardArray.length = 0;
         setUpBoardArray(boardHeight, boardWidth);
         populateBoard(boardArray);
@@ -166,6 +169,10 @@ function removePiece(cell) {
     document.getElementById(cell).innerText = '';
 }
 
+function winningText(winner) {
+    document.getElementById('winner-text').innerText = `Congratulations to the ${winner} player!`;
+}
+
 function checkForWinner() {
     let whiteCount = 0;
     let blackCount = 0;
@@ -179,9 +186,13 @@ function checkForWinner() {
         }
     }
     if (whiteCount === 0) {
-        alert('Black wins!');
+        document.getElementById('gameOver-modal').classList.toggle('hidden');
+        document.getElementById('gameOver-modal').classList.toggle('show');
+        winningText('Black');
     } else if (blackCount === 0) {
-        alert('White wins!');
+        document.getElementById('gameOver-modal').classList.toggle('hidden');
+        document.getElementById('gameOver-modal').classList.toggle('show');
+        winningText('White');
     }
 }
 

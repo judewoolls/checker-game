@@ -27,17 +27,25 @@
             <section class="col-12">
                 <h2 class="btn btn-info" id="instructions-button">Instructions</h2>
             </section>
-            <section class="col-12">
-                <button class="btn btn-danger" id="reset-button">Reset</button>
-            </section>
             <section class="col-12 hidden" id="instructions-modal">
                 <h3>Instructions</h3>
-                <p>Checkers is a two-player game where each player has 12 pieces. The goal is to capture all of the opponent's
-                    pieces or block them so they can't move. The game is played on an 8x8 board with alternating dark and light
-                    squares. The pieces are placed on the dark squares and can only move diagonally. If a piece reaches the
-                    opposite end of the board, it becomes a king and can move in any direction. The game ends when one player
+                <p>Checkers is a two-player game where each player has 12 pieces. The goal is to capture all of the
+                    opponent's
+                    pieces or block them so they can't move. The game is played on an 8x8 board with alternating dark
+                    and light
+                    squares. The pieces are placed on the dark squares and can only move diagonally. If a piece reaches
+                    the
+                    opposite end of the board, it becomes a king and can move in any direction. The game ends when one
+                    player
                     captures all of the opponent's pieces or blocks them from moving.</p>
                 <button class="btn btn-info" id="instructions-close">Close</button>
+            </section>
+            <section class="col-12 hidden" id="gameOver-modal">
+                <h3 id="winner-text"></h3>
+                <p>That is the end of the game! Congratulations you have removed all the other teams checkers!</p>
+                <section class="col-12">
+                    <button class="btn btn-danger" id="reset-button">Reset</button>
+                </section>
             </section>
         </div>
     </div>
@@ -47,7 +55,7 @@
         crossorigin="anonymous"></script>
     <script src="moves.js"></script>
     <script src="script.js"></script>
-    
+
 </body>
 
 </html>
