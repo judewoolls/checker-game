@@ -1,20 +1,22 @@
 // The main js script
 const boardHeight = 8;
 const boardWidth = 8;
-const numOfCells = boardHeight * boardWidth
-const boardArray = [];
+const numOfCells = boardHeight * boardWidth;
+let boardArray = [];
 
 // sets up the initial empty board array
 function setUpBoardArray(height, width) {
+    let board = [];
     for (let y = 0; y < height; y++) {
         let row = [];
         for (let x = 0; x < width; x++) {
             row.push(0);
         }
-        boardArray.push(row);
+        board.push(row);
     }
-    return boardArray;
+    return board;
 }
+
 // Sets up white checkers
 function populateWhite(board, i, j) {
     if (i === 0 && j % 2 !== 0) {
@@ -25,6 +27,7 @@ function populateWhite(board, i, j) {
         board[i][j] = 1;
     }
 }
+
 // Sets up black checkers
 function populateBlack(board, i, j) {
     if (i === 5 && j % 2 !== 1) {
@@ -35,30 +38,30 @@ function populateBlack(board, i, j) {
         board[i][j] = 2;
     }
 }
+
 // Sets up the Checkers to the starting position
 function populateBoard(board) {
     for (let i = 0; i < boardHeight; i++) {
         for (let j = 0; j < boardWidth; j++) {
             populateWhite(board, i, j);
-            populateBlack(board, i, j)
+            populateBlack(board, i, j);
         }
     }
 }
+
 // Renders the board
 function renderCheckers(board) {
     let counter = 0;
     for (let row = 0; row < boardHeight; row++) {
         for (let col = 0; col < boardWidth; col++) {
+            let item = document.getElementById(`${counter}`);
             if (board[row][col] === 1) {
-                item = document.getElementById(`${counter}`)
-                item.innerText = 'White'
+                item.innerText = 'White';
                 item.style.color = 'Orange';
             } else if (board[row][col] === 2) {
-                item = document.getElementById(`${counter}`)
-                item.innerText = 'Black'
+                item.innerText = 'Black';
                 item.style.color = 'Orange';
             } else {
-                item = document.getElementById(`${counter}`);
                 item.innerText = '';
             }
             counter++;
@@ -80,38 +83,37 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         if ((i + 1) % 8 === 0) {
             if (color === 'white') {
-                color = 'black'
+                color = 'black';
             } else {
-                color = 'white'
+                color = 'white';
             }
         }
     }
     board.innerHTML = grid;
-    const boardArray = setUpBoardArray(boardHeight, boardWidth);
-    populateBoard(boardArray)
-    renderCheckers(boardArray)
+    boardArray = setUpBoardArray(boardHeight, boardWidth);
+    populateBoard(boardArray);
+    renderCheckers(boardArray);
     console.log(boardArray);
     document.getElementById('instructions-button').addEventListener('click', function () {
         document.getElementById('instructions-modal').classList.toggle('hidden');
         document.getElementById('instructions-modal').classList.toggle('show');
-    })
+    });
     document.getElementById('instructions-close').addEventListener('click', function () {
         document.getElementById('instructions-modal').classList.toggle('hidden');
         document.getElementById('instructions-modal').classList.toggle('show');
-    })
+    });
     document.getElementById('reset-button').addEventListener('click', function () {
         // hide the modal
         document.getElementById('gameOver-modal').classList.toggle('hidden');
         document.getElementById('gameOver-modal').classList.toggle('show');
         // clear the board array
-        boardArray.length = 0;
-        setUpBoardArray(boardHeight, boardWidth);
+        boardArray = setUpBoardArray(boardHeight, boardWidth);
         populateBoard(boardArray);
-        renderCheckers(boardArray); 
+        renderCheckers(boardArray);
         turn = 'white';
         displayTurn(turn);
-    })
-})
+    });
+});
 
 // For checking which cell is clicked
 // 0 - 7
@@ -266,6 +268,38 @@ function validWhiteMove(cell) {
     return false;
 }
 
+// Function to check if the piece can take again
+function canTakeAgain(cell, currentTurn) {
+    let [x, y] = findPosition(cell);
+
+    function isValidJump(newX, newY, moveFunction) {
+        if (newX >= 0 && newX < 8 && newY >= 0 && newY < 8) {
+            return moveFunction(newY * 8 + newX) === 'take';
+        }
+        return false;
+    }
+
+    if (currentTurn === 'white') {
+        return isValidJump(x + 2, y + 2, validWhiteMove) ||
+               isValidJump(x - 2, y + 2, validWhiteMove);
+    } else {
+        return isValidJump(x + 2, y - 2, validBlackMove) ||
+               isValidJump(x - 2, y - 2, validBlackMove);
+    }
+}
+
+
+function toggleSwitchTurnButton(show) {
+    const button = document.getElementById('switch-turn-button');
+    if (show) {
+        button.classList.remove('hidden');
+        button.classList.add('show');
+    } else {
+        button.classList.remove('show');
+        button.classList.add('hidden');
+    }
+}
+
 // Game variables
 let turn = 'white';
 let activePiece = null;
@@ -273,6 +307,8 @@ let activePieceIndex = null;
 let previousCell = null;
 let activeSelectionInterval = null;
 let flip = 0;
+let mustTakeAgain = false;
+let capturingPiece = null; // Track the piece that made the capture
 
 // Game logic that is checked whenever there is a click on the screen
 document.addEventListener('click', function (event) {
@@ -298,8 +334,15 @@ document.addEventListener('click', function (event) {
                     document.getElementById(event.target.id).innerText = 'White';
                     document.getElementById(previousCell).innerText = '';
                     updateArray(event.target.id, turn); // should update the array after a move 
-                    if (moveResult !== 'take') {
+                    if (moveResult === 'take' && canTakeAgain(parseInt(event.target.id), 'white')) {
+                        mustTakeAgain = true;
+                        capturingPiece = parseInt(event.target.id); // Track the capturing piece
+                        toggleSwitchTurnButton(true);
+                    } else {
                         turn = 'black';
+                        mustTakeAgain = false;
+                        capturingPiece = null;
+                        toggleSwitchTurnButton(false);
                     }
                 }
                 unselectPiece();
@@ -315,8 +358,15 @@ document.addEventListener('click', function (event) {
                     document.getElementById(event.target.id).innerText = 'Black';
                     document.getElementById(previousCell).innerText = '';
                     updateArray(event.target.id, turn); // should update array after a move
-                    if (moveResult !== 'take') {
+                    if (moveResult === 'take' && canTakeAgain(parseInt(event.target.id), 'black')) {
+                        mustTakeAgain = true;
+                        capturingPiece = parseInt(event.target.id); // Track the capturing piece
+                        toggleSwitchTurnButton(true);
+                    } else {
                         turn = 'white';
+                        mustTakeAgain = false;
+                        capturingPiece = null;
+                        toggleSwitchTurnButton(false);
                     }
                 }
                 unselectPiece();
@@ -330,4 +380,19 @@ document.addEventListener('click', function (event) {
         console.log(boardArray);
     }
     checkForWinner();
+});
+
+// Button to switch turns if the player does not wish to take another piece
+document.getElementById('switch-turn-button').addEventListener('click', function () {
+    if (mustTakeAgain) {
+        if (turn === 'white') {
+            turn = 'black';
+        } else {
+            turn = 'white';
+        }
+        mustTakeAgain = false;
+        capturingPiece = null;
+        displayTurn(turn);
+        toggleSwitchTurnButton(false);
+    }
 });
