@@ -1,4 +1,13 @@
 // The main js script
+/* 
+1. I need to add the multiple turns for when a jump move is available
+2. I need to adjust the logic for when a piece is taken to support multiple jumps
+3. I need to add the logic for when a piece is kinged
+4. I need to add the logic for when a piece is kinged and can take again
+5. I need to add the logic for when a piece is kinged and can take again multiple times
+6. I need to add the logic for when a piece is kinged and can take again and then move
+
+*/
 const boardHeight = 8;
 const boardWidth = 8;
 const numOfCells = boardHeight * boardWidth;
@@ -215,16 +224,16 @@ function validBlackMove(cell, executeMove = true) {
                 // check if there is an opposition piece and the landing spot is empty
                 if (boardArray[startPosition[1] - 1][startPosition[0] - 1] === 1 && boardArray[endPosition[1]][endPosition[0]] === 0) {
                     if (executeMove) {
-                        // mark the opposing piece for removal
-                        deadChecker = (startPosition[1] - 1) * 8 + (startPosition[0] - 1);
+                        // remove the opposing piece
+                        removePiece((startPosition[1] - 1) * 8 + (startPosition[0] - 1));
                     }
                     return 'take';
                 }
             } else if (endPosition[0] - startPosition[0] > 0) { // checks moves to the right
                 if (boardArray[startPosition[1] - 1][startPosition[0] + 1] === 1 && boardArray[endPosition[1]][endPosition[0]] === 0) {
                     if (executeMove) {
-                        // mark the opposing piece for removal
-                        deadChecker = (startPosition[1] - 1) * 8 + (startPosition[0] + 1);
+                        // remove the opposing piece
+                        removePiece((startPosition[1] - 1) * 8 + (startPosition[0] + 1));
                     }
                     return 'take';
                 }
@@ -251,16 +260,16 @@ function validWhiteMove(cell, executeMove = true) {
                 // check if there is an opposition piece and the landing spot is empty
                 if (boardArray[startPosition[1] + 1][startPosition[0] - 1] === 2 && boardArray[endPosition[1]][endPosition[0]] === 0) {
                     if (executeMove) {
-                        // mark the opposing piece for removal
-                        deadChecker = (startPosition[1] + 1) * 8 + (startPosition[0] - 1);
+                        // remove the opposing piece
+                        removePiece((startPosition[1] + 1) * 8 + (startPosition[0] - 1));
                     }
                     return 'take';
                 }
             } else if (endPosition[0] - startPosition[0] > 0) { // checks moves to the right
                 if (boardArray[startPosition[1] + 1][startPosition[0] + 1] === 2 && boardArray[endPosition[1]][endPosition[0]] === 0) {
                     if (executeMove) {
-                        // mark the opposing piece for removal
-                        deadChecker = (startPosition[1] + 1) * 8 + (startPosition[0] + 1);
+                        // remove the opposing piece
+                        removePiece((startPosition[1] + 1) * 8 + (startPosition[0] + 1));
                     }
                     return 'take';
                 }
@@ -274,20 +283,21 @@ function validWhiteMove(cell, executeMove = true) {
 function canTakeAgain(cell, currentTurn) {
     let [x, y] = findPosition(cell);
 
-    function isValidJump(newX, newY, moveFunction) {
+    function isValidJump(newX, newY, opponentPiece) {
         if (newX >= 0 && newX < 8 && newY >= 0 && newY < 8) {
+            let midX = (x + newX) / 2;
+            let midY = (y + newY) / 2;
             let newCell = newY * 8 + newX;
-            return moveFunction(newCell, false) === 'take';
+            let midCell = midY * 8 + midX;
+            return boardArray[midY][midX] === opponentPiece && boardArray[newY][newX] === 0;
         }
         return false;
     }
 
     if (currentTurn === 'white') {
-        return isValidJump(x + 2, y + 2, validWhiteMove) ||
-               isValidJump(x - 2, y + 2, validWhiteMove);
+        return isValidJump(x + 2, y + 2, 2) || isValidJump(x - 2, y + 2, 2);
     } else {
-        return isValidJump(x + 2, y - 2, validBlackMove) ||
-               isValidJump(x - 2, y - 2, validBlackMove);
+        return isValidJump(x + 2, y - 2, 1) || isValidJump(x - 2, y - 2, 1);
     }
 }
 
@@ -331,9 +341,6 @@ document.addEventListener('click', function (event) {
                         mustTakeAgain = true;
                         capturingPiece = parseInt(event.target.id); // Track the capturing piece
                     } else {
-                        if (moveResult === 'take') {
-                            removePiece(deadChecker);
-                        }
                         console.log(moveResult);
                         console.log('switch turn');
                         turn = 'black';
@@ -360,9 +367,6 @@ document.addEventListener('click', function (event) {
                         mustTakeAgain = true;
                         capturingPiece = parseInt(event.target.id); // Track the capturing piece
                     } else {
-                        if (moveResult === 'take') {
-                            removePiece(deadChecker);
-                        }
                         console.log('switched turn');
                         turn = 'white';
                         mustTakeAgain = false;
