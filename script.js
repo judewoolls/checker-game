@@ -3,6 +3,7 @@ const boardHeight = 8;
 const boardWidth = 8;
 const numOfCells = boardHeight * boardWidth;
 let boardArray = [];
+let deadChecker = null;
 
 // sets up the initial empty board array
 function setUpBoardArray(height, width) {
@@ -198,7 +199,7 @@ function checkForWinner() {
 }
 
 // valid black move  -- So diagonally up left or right  up is minus
-function validBlackMove(cell) {
+function validBlackMove(cell, executeMove = true) {
     let startPosition = findPosition(previousCell);
     let endPosition = findPosition(cell);
 
@@ -213,10 +214,18 @@ function validBlackMove(cell) {
             if (endPosition[0] - startPosition[0] < 0) { // checks moves to the left
                 // check if there is an opposition piece and the landing spot is empty
                 if (boardArray[startPosition[1] - 1][startPosition[0] - 1] === 1 && boardArray[endPosition[1]][endPosition[0]] === 0) {
+                    if (executeMove) {
+                        // mark the opposing piece for removal
+                        deadChecker = (startPosition[1] - 1) * 8 + (startPosition[0] - 1);
+                    }
                     return 'take';
                 }
             } else if (endPosition[0] - startPosition[0] > 0) { // checks moves to the right
                 if (boardArray[startPosition[1] - 1][startPosition[0] + 1] === 1 && boardArray[endPosition[1]][endPosition[0]] === 0) {
+                    if (executeMove) {
+                        // mark the opposing piece for removal
+                        deadChecker = (startPosition[1] - 1) * 8 + (startPosition[0] + 1);
+                    }
                     return 'take';
                 }
             }
@@ -226,7 +235,7 @@ function validBlackMove(cell) {
 }
 
 // valid white move  -- So diagonally down left or right
-function validWhiteMove(cell) {
+function validWhiteMove(cell, executeMove = true) {
     let startPosition = findPosition(previousCell);
     let endPosition = findPosition(cell);
 
@@ -241,10 +250,18 @@ function validWhiteMove(cell) {
             if (endPosition[0] - startPosition[0] < 0) { // checks moves to the left
                 // check if there is an opposition piece and the landing spot is empty
                 if (boardArray[startPosition[1] + 1][startPosition[0] - 1] === 2 && boardArray[endPosition[1]][endPosition[0]] === 0) {
+                    if (executeMove) {
+                        // mark the opposing piece for removal
+                        deadChecker = (startPosition[1] + 1) * 8 + (startPosition[0] - 1);
+                    }
                     return 'take';
                 }
             } else if (endPosition[0] - startPosition[0] > 0) { // checks moves to the right
                 if (boardArray[startPosition[1] + 1][startPosition[0] + 1] === 2 && boardArray[endPosition[1]][endPosition[0]] === 0) {
+                    if (executeMove) {
+                        // mark the opposing piece for removal
+                        deadChecker = (startPosition[1] + 1) * 8 + (startPosition[0] + 1);
+                    }
                     return 'take';
                 }
             }
@@ -260,40 +277,7 @@ function canTakeAgain(cell, currentTurn) {
     function isValidJump(newX, newY, moveFunction) {
         if (newX >= 0 && newX < 8 && newY >= 0 && newY < 8) {
             let newCell = newY * 8 + newX;
-            let startPosition = findPosition(cell);
-            let endPosition = findPosition(newCell);
-
-            if (currentTurn === 'white') {
-                if (endPosition[1] === (startPosition[1] + 2)) { // check for jump move
-                    if (endPosition[0] === (startPosition[0] + 2) || endPosition[0] === (startPosition[0] - 2)) {
-                        if (endPosition[0] - startPosition[0] < 0) { // checks moves to the left
-                            // check if there is an opposition piece and the landing spot is empty
-                            if (boardArray[startPosition[1] + 1][startPosition[0] - 1] === 2 && boardArray[endPosition[1]][endPosition[0]] === 0) {
-                                return true;
-                            }
-                        } else if (endPosition[0] - startPosition[0] > 0) { // checks moves to the right
-                            if (boardArray[startPosition[1] + 1][startPosition[0] + 1] === 2 && boardArray[endPosition[1]][endPosition[0]] === 0) {
-                                return true;
-                            }
-                        }
-                    }
-                }
-            } else {
-                if (endPosition[1] === (startPosition[1] - 2)) { // check for jump move
-                    if (endPosition[0] === (startPosition[0] + 2) || endPosition[0] === (startPosition[0] - 2)) {
-                        if (endPosition[0] - startPosition[0] < 0) { // checks moves to the left
-                            // check if there is an opposition piece and the landing spot is empty
-                            if (boardArray[startPosition[1] - 1][startPosition[0] - 1] === 1 && boardArray[endPosition[1]][endPosition[0]] === 0) {
-                                return true;
-                            }
-                        } else if (endPosition[0] - startPosition[0] > 0) { // checks moves to the right
-                            if (boardArray[startPosition[1] - 1][startPosition[0] + 1] === 1 && boardArray[endPosition[1]][endPosition[0]] === 0) {
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
+            return moveFunction(newCell, false) === 'take';
         }
         return false;
     }
@@ -304,18 +288,6 @@ function canTakeAgain(cell, currentTurn) {
     } else {
         return isValidJump(x + 2, y - 2, validBlackMove) ||
                isValidJump(x - 2, y - 2, validBlackMove);
-    }
-}
-
-
-function toggleSwitchTurnButton(show) {
-    const button = document.getElementById('switch-turn-button');
-    if (show) {
-        button.classList.remove('hidden');
-        button.classList.add('show');
-    } else {
-        button.classList.remove('show');
-        button.classList.add('hidden');
     }
 }
 
@@ -358,14 +330,15 @@ document.addEventListener('click', function (event) {
                         console.log('must take again');
                         mustTakeAgain = true;
                         capturingPiece = parseInt(event.target.id); // Track the capturing piece
-                        toggleSwitchTurnButton(true);
                     } else {
+                        if (moveResult === 'take') {
+                            removePiece(deadChecker);
+                        }
                         console.log(moveResult);
                         console.log('switch turn');
                         turn = 'black';
                         mustTakeAgain = false;
                         capturingPiece = null;
-                        toggleSwitchTurnButton(false);
                     }
                 }
                 unselectPiece();
@@ -386,13 +359,14 @@ document.addEventListener('click', function (event) {
                         console.log('must take again');
                         mustTakeAgain = true;
                         capturingPiece = parseInt(event.target.id); // Track the capturing piece
-                        toggleSwitchTurnButton(true);
                     } else {
+                        if (moveResult === 'take') {
+                            removePiece(deadChecker);
+                        }
                         console.log('switched turn');
                         turn = 'white';
                         mustTakeAgain = false;
                         capturingPiece = null;
-                        toggleSwitchTurnButton(false);
                     }
                 }
                 unselectPiece();
@@ -405,19 +379,4 @@ document.addEventListener('click', function (event) {
         renderCheckers(boardArray);
     }
     checkForWinner();
-});
-
-// Button to switch turns if the player does not wish to take another piece
-document.getElementById('switch-turn-button').addEventListener('click', function () {
-    if (mustTakeAgain) {
-        if (turn === 'white') {
-            turn = 'black';
-        } else {
-            turn = 'white';
-        }
-        mustTakeAgain = false;
-        capturingPiece = null;
-        displayTurn(turn);
-        toggleSwitchTurnButton(false);
-    }
 });
