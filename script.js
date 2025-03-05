@@ -93,7 +93,6 @@ document.addEventListener('DOMContentLoaded', function () {
     boardArray = setUpBoardArray(boardHeight, boardWidth);
     populateBoard(boardArray);
     renderCheckers(boardArray);
-    console.log(boardArray);
     document.getElementById('instructions-button').addEventListener('click', function () {
         document.getElementById('instructions-modal').classList.toggle('hidden');
         document.getElementById('instructions-modal').classList.toggle('show');
@@ -207,7 +206,6 @@ function validBlackMove(cell) {
     if (endPosition[1] === (startPosition[1] - 1)) {
         // check the correct x value
         if (endPosition[0] === (startPosition[0] + 1) || endPosition[0] === (startPosition[0] - 1)) {
-            console.log('valid BLACK move');
             return 'move';
         }
     } else if (endPosition[1] === (startPosition[1] - 2)) { // check for jump move
@@ -215,16 +213,10 @@ function validBlackMove(cell) {
             if (endPosition[0] - startPosition[0] < 0) { // checks moves to the left
                 // check if there is an opposition piece and the landing spot is empty
                 if (boardArray[startPosition[1] - 1][startPosition[0] - 1] === 1 && boardArray[endPosition[1]][endPosition[0]] === 0) {
-                    // remove opposing piece
-                    removePiece((startPosition[1] - 1) * 8 + (startPosition[0] - 1));
-                    console.log('valid BLACK move');
                     return 'take';
                 }
             } else if (endPosition[0] - startPosition[0] > 0) { // checks moves to the right
                 if (boardArray[startPosition[1] - 1][startPosition[0] + 1] === 1 && boardArray[endPosition[1]][endPosition[0]] === 0) {
-                    // remove the opposing piece
-                    removePiece((startPosition[1] - 1) * 8 + (startPosition[0] + 1));
-                    console.log('valid BLACK move');
                     return 'take';
                 }
             }
@@ -242,7 +234,6 @@ function validWhiteMove(cell) {
     if (endPosition[1] === (startPosition[1] + 1)) {
         // check the correct x value
         if (endPosition[0] === (startPosition[0] + 1) || endPosition[0] === (startPosition[0] - 1)) {
-            console.log('valid WHITE move');
             return 'move';
         }
     } else if (endPosition[1] === (startPosition[1] + 2)) { // check for jump move
@@ -250,16 +241,10 @@ function validWhiteMove(cell) {
             if (endPosition[0] - startPosition[0] < 0) { // checks moves to the left
                 // check if there is an opposition piece and the landing spot is empty
                 if (boardArray[startPosition[1] + 1][startPosition[0] - 1] === 2 && boardArray[endPosition[1]][endPosition[0]] === 0) {
-                    // remove opposing piece
-                    removePiece((startPosition[1] + 1) * 8 + (startPosition[0] - 1));
-                    console.log('valid WHITE move');
                     return 'take';
                 }
             } else if (endPosition[0] - startPosition[0] > 0) { // checks moves to the right
                 if (boardArray[startPosition[1] + 1][startPosition[0] + 1] === 2 && boardArray[endPosition[1]][endPosition[0]] === 0) {
-                    // remove the opposing piece
-                    removePiece((startPosition[1] + 1) * 8 + (startPosition[0] + 1));
-                    console.log('valid WHITE move');
                     return 'take';
                 }
             }
@@ -274,7 +259,41 @@ function canTakeAgain(cell, currentTurn) {
 
     function isValidJump(newX, newY, moveFunction) {
         if (newX >= 0 && newX < 8 && newY >= 0 && newY < 8) {
-            return moveFunction(newY * 8 + newX) === 'take';
+            let newCell = newY * 8 + newX;
+            let startPosition = findPosition(cell);
+            let endPosition = findPosition(newCell);
+
+            if (currentTurn === 'white') {
+                if (endPosition[1] === (startPosition[1] + 2)) { // check for jump move
+                    if (endPosition[0] === (startPosition[0] + 2) || endPosition[0] === (startPosition[0] - 2)) {
+                        if (endPosition[0] - startPosition[0] < 0) { // checks moves to the left
+                            // check if there is an opposition piece and the landing spot is empty
+                            if (boardArray[startPosition[1] + 1][startPosition[0] - 1] === 2 && boardArray[endPosition[1]][endPosition[0]] === 0) {
+                                return true;
+                            }
+                        } else if (endPosition[0] - startPosition[0] > 0) { // checks moves to the right
+                            if (boardArray[startPosition[1] + 1][startPosition[0] + 1] === 2 && boardArray[endPosition[1]][endPosition[0]] === 0) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            } else {
+                if (endPosition[1] === (startPosition[1] - 2)) { // check for jump move
+                    if (endPosition[0] === (startPosition[0] + 2) || endPosition[0] === (startPosition[0] - 2)) {
+                        if (endPosition[0] - startPosition[0] < 0) { // checks moves to the left
+                            // check if there is an opposition piece and the landing spot is empty
+                            if (boardArray[startPosition[1] - 1][startPosition[0] - 1] === 1 && boardArray[endPosition[1]][endPosition[0]] === 0) {
+                                return true;
+                            }
+                        } else if (endPosition[0] - startPosition[0] > 0) { // checks moves to the right
+                            if (boardArray[startPosition[1] - 1][startPosition[0] + 1] === 1 && boardArray[endPosition[1]][endPosition[0]] === 0) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
         }
         return false;
     }
@@ -334,11 +353,15 @@ document.addEventListener('click', function (event) {
                     document.getElementById(event.target.id).innerText = 'White';
                     document.getElementById(previousCell).innerText = '';
                     updateArray(event.target.id, turn); // should update the array after a move 
+                    console.log(moveResult);
                     if (moveResult === 'take' && canTakeAgain(parseInt(event.target.id), 'white')) {
+                        console.log('must take again');
                         mustTakeAgain = true;
                         capturingPiece = parseInt(event.target.id); // Track the capturing piece
                         toggleSwitchTurnButton(true);
                     } else {
+                        console.log(moveResult);
+                        console.log('switch turn');
                         turn = 'black';
                         mustTakeAgain = false;
                         capturingPiece = null;
@@ -358,11 +381,14 @@ document.addEventListener('click', function (event) {
                     document.getElementById(event.target.id).innerText = 'Black';
                     document.getElementById(previousCell).innerText = '';
                     updateArray(event.target.id, turn); // should update array after a move
+                    console.log(canTakeAgain(parseInt(event.target.id), 'black'));
                     if (moveResult === 'take' && canTakeAgain(parseInt(event.target.id), 'black')) {
+                        console.log('must take again');
                         mustTakeAgain = true;
                         capturingPiece = parseInt(event.target.id); // Track the capturing piece
                         toggleSwitchTurnButton(true);
                     } else {
+                        console.log('switched turn');
                         turn = 'white';
                         mustTakeAgain = false;
                         capturingPiece = null;
@@ -377,7 +403,6 @@ document.addEventListener('click', function (event) {
         clearInterval(activeSelectionInterval); // Clear the interval whenever the active piece is reset
         displayTurn(turn);
         renderCheckers(boardArray);
-        console.log(boardArray);
     }
     checkForWinner();
 });
