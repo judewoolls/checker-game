@@ -1,18 +1,32 @@
 // The main js script
 /* 
-Need to add the logic that only the same piece can be moved if another piece can be taken
+a. Need to unselect a piece if the player clicks on a different piece - minor fix
 
 3. I need to add the logic for when a piece is kinged
 4. I need to add the logic for when a piece is kinged and can take again
 5. I need to add the logic for when a piece is kinged and can take again multiple times
 6. I need to add the logic for when a piece is kinged and can take again and then move
 
+How i am going to implement the kinged pieces. The number assigned to the piece will be changed to 3 if the piece is kinged and is white
+and 4 if the piece is kinged and is black. This will allow me to differentiate between the two types of pieces. I will also need to add
+the logic to check if a piece is kinged and can take again. I will also need to add the logic to check if a piece is kinged and can take
+again multiple times. I will also need to add the logic to check if a piece is kinged and can take again and then move.
+
+I will need to add to the current checks for color the opposing king number as well as the normal number.
+
+Also need to add more to the valid move functions to check for kinged pieces and their moves.
+
+also the check for kinging a piece needs to be added to the valid move functions
+
+a piece is kinged if its white and reaches row[7] or if its black and reaches row[0]
+
 */
+
+
 const boardHeight = 8;
 const boardWidth = 8;
 const numOfCells = boardHeight * boardWidth;
 let boardArray = [];
-let deadChecker = null;
 let pieces = []; // Array to store pieces
 let pieceCounter = 0; // Counter to assign unique identifiers to pieces
 
