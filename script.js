@@ -319,6 +319,15 @@ let flip = 0;
 let mustTakeAgain = false;
 let capturingPiece = null; // Track the piece that made the capture
 
+function displayActivePiece() {
+    const activePieceDisplay = document.getElementById('active-piece');
+    if (activePiece) {
+        activePieceDisplay.innerText = turn === 'white' ? 'White' : 'Black';
+    } else {
+        activePieceDisplay.innerText = 'None Selected';
+    }
+}
+
 // Game logic that is checked whenever there is a click on the screen
 document.addEventListener('click', function (event) {
     if (event.target.classList.contains('cell') && activePiece === null) {
@@ -330,15 +339,17 @@ document.addEventListener('click', function (event) {
         } else if (activePiece === 'black' && turn === 'black') {
             activePieceColorSwap(flip, event);
         } else {
-            unselectPiece(activeSelectionInterval);
+            unselectPiece();
         }
+        displayActivePiece(); // Call displayActivePiece when a piece is selected
     } else if (event.target.classList.contains('cell') && activePiece !== null) {
         let moveResult = false;
         let piece = boardArray[findPosition(previousCell)[1]][findPosition(previousCell)[0]];
         if (mustTakeAgain && capturingPiece !== piece[1]) {
             // If must take again, ensure the same piece is moving
             console.log('must take again with the same piece');
-            unselectPiece(activeSelectionInterval);
+            unselectPiece();
+            displayActivePiece(); // Call displayActivePiece when a piece is unselected
             return;
         }
         if (turn === 'white') {
@@ -363,9 +374,11 @@ document.addEventListener('click', function (event) {
                         capturingPiece = null;
                     }
                 }
-                unselectPiece(activeSelectionInterval);
+                unselectPiece();
+                displayActivePiece(); // Call displayActivePiece when a piece is unselected
             } else if (activePiece === 'black') {
-                unselectPiece(activeSelectionInterval);
+                unselectPiece();
+                displayActivePiece(); // Call displayActivePiece when a piece is unselected
             }
         } else if (turn === 'black') {
             if (activePiece === 'black' && document.getElementById(event.target.id).innerText === '') {
@@ -388,9 +401,11 @@ document.addEventListener('click', function (event) {
                         capturingPiece = null;
                     }
                 }
-                unselectPiece(activeSelectionInterval);
+                unselectPiece();
+                displayActivePiece(); // Call displayActivePiece when a piece is unselected
             } else if (activePiece === 'white') {
-                unselectPiece(activeSelectionInterval);
+                unselectPiece();
+                displayActivePiece(); // Call displayActivePiece when a piece is unselected
             }
         }
         clearInterval(activeSelectionInterval); // Clear the interval whenever the active piece is reset
