@@ -1,7 +1,7 @@
 // The main js script
 /* 
-1. I need to add the multiple turns for when a jump move is available
-2. I need to adjust the logic for when a piece is taken to support multiple jumps
+Need to add the logic that only the same piece can be moved if another piece can be taken
+
 3. I need to add the logic for when a piece is kinged
 4. I need to add the logic for when a piece is kinged and can take again
 5. I need to add the logic for when a piece is kinged and can take again multiple times
@@ -13,6 +13,8 @@ const boardWidth = 8;
 const numOfCells = boardHeight * boardWidth;
 let boardArray = [];
 let deadChecker = null;
+let pieces = []; // Array to store pieces
+let pieceCounter = 0; // Counter to assign unique identifiers to pieces
 
 // sets up the initial empty board array
 function setUpBoardArray(height, width) {
@@ -30,22 +32,28 @@ function setUpBoardArray(height, width) {
 // Sets up white checkers
 function populateWhite(board, i, j) {
     if (i === 0 && j % 2 !== 0) {
-        board[i][j] = 1;
+        board[i][j] = [1, pieceCounter++];
+        pieces.push(board[i][j]);
     } else if (i === 1 && j % 2 !== 1) {
-        board[i][j] = 1;
+        board[i][j] = [1, pieceCounter++];
+        pieces.push(board[i][j]);
     } else if (i === 2 && j % 2 !== 0) {
-        board[i][j] = 1;
+        board[i][j] = [1, pieceCounter++];
+        pieces.push(board[i][j]);
     }
 }
 
 // Sets up black checkers
 function populateBlack(board, i, j) {
     if (i === 5 && j % 2 !== 1) {
-        board[i][j] = 2;
+        board[i][j] = [2, pieceCounter++];
+        pieces.push(board[i][j]);
     } else if (i === 6 && j % 2 !== 0) {
-        board[i][j] = 2;
+        board[i][j] = [2, pieceCounter++];
+        pieces.push(board[i][j]);
     } else if (i === 7 && j % 2 !== 1) {
-        board[i][j] = 2;
+        board[i][j] = [2, pieceCounter++];
+        pieces.push(board[i][j]);
     }
 }
 
@@ -65,10 +73,10 @@ function renderCheckers(board) {
     for (let row = 0; row < boardHeight; row++) {
         for (let col = 0; col < boardWidth; col++) {
             let item = document.getElementById(`${counter}`);
-            if (board[row][col] === 1) {
+            if (board[row][col] && board[row][col][0] === 1) {
                 item.innerText = 'White';
                 item.style.color = 'Orange';
-            } else if (board[row][col] === 2) {
+            } else if (board[row][col] && board[row][col][0] === 2) {
                 item.innerText = 'Black';
                 item.style.color = 'Orange';
             } else {
@@ -164,11 +172,8 @@ function displayTurn(turn) {
 // Updates the array after a move 
 function updateArray(cell, currentTurn) {
     let [x, y] = findPosition(cell);
-    if (currentTurn === 'white') {
-        boardArray[y][x] = 1;
-    } else {
-        boardArray[y][x] = 2;
-    }
+    let piece = boardArray[findPosition(previousCell)[1]][findPosition(previousCell)[0]];
+    boardArray[y][x] = piece;
     let [prevX, prevY] = findPosition(previousCell);
     boardArray[prevY][prevX] = 0;
 }
@@ -326,6 +331,7 @@ document.addEventListener('click', function (event) {
         }
     } else if (event.target.classList.contains('cell') && activePiece !== null) {
         let moveResult = false;
+        let piece = boardArray[findPosition(previousCell)[1]][findPosition(previousCell)[0]];
         if (turn === 'white') {
             if (activePiece === 'white' && document.getElementById(event.target.id).innerText === '') {
                 // check for valid move
