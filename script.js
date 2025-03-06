@@ -194,9 +194,9 @@ function checkForWinner() {
     let blackCount = 0;
     for (let i = 0; i < boardHeight; i++) {
         for (let j = 0; j < boardWidth; j++) {
-            if (boardArray[i][j] === 1) {
+            if (boardArray[i][j] && boardArray[i][j][0] === 1) {
                 whiteCount++;
-            } else if (boardArray[i][j] === 2) {
+            } else if (boardArray[i][j] && boardArray[i][j][0] === 2) {
                 blackCount++;
             }
         }
@@ -227,7 +227,7 @@ function validBlackMove(cell, executeMove = true) {
         if (endPosition[0] === (startPosition[0] + 2) || endPosition[0] === (startPosition[0] - 2)) {
             if (endPosition[0] - startPosition[0] < 0) { // checks moves to the left
                 // check if there is an opposition piece and the landing spot is empty
-                if (boardArray[startPosition[1] - 1][startPosition[0] - 1] === 1 && boardArray[endPosition[1]][endPosition[0]] === 0) {
+                if (boardArray[startPosition[1] - 1][startPosition[0] - 1][0] === 1 && boardArray[endPosition[1]][endPosition[0]] === 0) {
                     if (executeMove) {
                         // remove the opposing piece
                         removePiece((startPosition[1] - 1) * 8 + (startPosition[0] - 1));
@@ -235,7 +235,7 @@ function validBlackMove(cell, executeMove = true) {
                     return 'take';
                 }
             } else if (endPosition[0] - startPosition[0] > 0) { // checks moves to the right
-                if (boardArray[startPosition[1] - 1][startPosition[0] + 1] === 1 && boardArray[endPosition[1]][endPosition[0]] === 0) {
+                if (boardArray[startPosition[1] - 1][startPosition[0] + 1][0] === 1 && boardArray[endPosition[1]][endPosition[0]] === 0) {
                     if (executeMove) {
                         // remove the opposing piece
                         removePiece((startPosition[1] - 1) * 8 + (startPosition[0] + 1));
@@ -263,7 +263,7 @@ function validWhiteMove(cell, executeMove = true) {
         if (endPosition[0] === (startPosition[0] + 2) || endPosition[0] === (startPosition[0] - 2)) {
             if (endPosition[0] - startPosition[0] < 0) { // checks moves to the left
                 // check if there is an opposition piece and the landing spot is empty
-                if (boardArray[startPosition[1] + 1][startPosition[0] - 1] === 2 && boardArray[endPosition[1]][endPosition[0]] === 0) {
+                if (boardArray[startPosition[1] + 1][startPosition[0] - 1][0] === 2 && boardArray[endPosition[1]][endPosition[0]] === 0) {
                     if (executeMove) {
                         // remove the opposing piece
                         removePiece((startPosition[1] + 1) * 8 + (startPosition[0] - 1));
@@ -271,7 +271,7 @@ function validWhiteMove(cell, executeMove = true) {
                     return 'take';
                 }
             } else if (endPosition[0] - startPosition[0] > 0) { // checks moves to the right
-                if (boardArray[startPosition[1] + 1][startPosition[0] + 1] === 2 && boardArray[endPosition[1]][endPosition[0]] === 0) {
+                if (boardArray[startPosition[1] + 1][startPosition[0] + 1][0] === 2 && boardArray[endPosition[1]][endPosition[0]] === 0) {
                     if (executeMove) {
                         // remove the opposing piece
                         removePiece((startPosition[1] + 1) * 8 + (startPosition[0] + 1));
@@ -292,9 +292,7 @@ function canTakeAgain(cell, currentTurn) {
         if (newX >= 0 && newX < 8 && newY >= 0 && newY < 8) {
             let midX = (x + newX) / 2;
             let midY = (y + newY) / 2;
-            let newCell = newY * 8 + newX;
-            let midCell = midY * 8 + midX;
-            return boardArray[midY][midX] === opponentPiece && boardArray[newY][newX] === 0;
+            return boardArray[midY][midX][0] === opponentPiece && boardArray[newY][newX] === 0;
         }
         return false;
     }
@@ -332,6 +330,12 @@ document.addEventListener('click', function (event) {
     } else if (event.target.classList.contains('cell') && activePiece !== null) {
         let moveResult = false;
         let piece = boardArray[findPosition(previousCell)[1]][findPosition(previousCell)[0]];
+        if (mustTakeAgain && capturingPiece !== piece[1]) {
+            // If must take again, ensure the same piece is moving
+            console.log('must take again with the same piece');
+            unselectPiece();
+            return;
+        }
         if (turn === 'white') {
             if (activePiece === 'white' && document.getElementById(event.target.id).innerText === '') {
                 // check for valid move
@@ -345,7 +349,7 @@ document.addEventListener('click', function (event) {
                     if (moveResult === 'take' && canTakeAgain(parseInt(event.target.id), 'white')) {
                         console.log('must take again');
                         mustTakeAgain = true;
-                        capturingPiece = parseInt(event.target.id); // Track the capturing piece
+                        capturingPiece = piece[1]; // Track the capturing piece
                     } else {
                         console.log(moveResult);
                         console.log('switch turn');
@@ -371,7 +375,7 @@ document.addEventListener('click', function (event) {
                     if (moveResult === 'take' && canTakeAgain(parseInt(event.target.id), 'black')) {
                         console.log('must take again');
                         mustTakeAgain = true;
-                        capturingPiece = parseInt(event.target.id); // Track the capturing piece
+                        capturingPiece = piece[1]; // Track the capturing piece
                     } else {
                         console.log('switched turn');
                         turn = 'white';
