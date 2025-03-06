@@ -160,13 +160,18 @@ function activePieceColorSwap(flip, event) {
 
 // used when unselecting a piece is required
 function unselectPiece() {
+    if (previousCell !== null) {
+        document.getElementById(previousCell).style.color = 'orange';
+    }
     activePiece = null;
     previousCell = null;
+    clearInterval(activeSelectionInterval);
 }
 
 // Renders whose turn it is to the screen
 function displayTurn(turn) {
-    document.getElementById('turn').innerText = `${turn}`;
+    const turnString = turn === 'white' ? 'White' : 'Black';
+    document.getElementById('turn').innerText = `${turnString}`;
 }
 
 // Updates the array after a move 
@@ -325,7 +330,7 @@ document.addEventListener('click', function (event) {
         } else if (activePiece === 'black' && turn === 'black') {
             activePieceColorSwap(flip, event);
         } else {
-            unselectPiece();
+            unselectPiece(activeSelectionInterval);
         }
     } else if (event.target.classList.contains('cell') && activePiece !== null) {
         let moveResult = false;
@@ -333,7 +338,7 @@ document.addEventListener('click', function (event) {
         if (mustTakeAgain && capturingPiece !== piece[1]) {
             // If must take again, ensure the same piece is moving
             console.log('must take again with the same piece');
-            unselectPiece();
+            unselectPiece(activeSelectionInterval);
             return;
         }
         if (turn === 'white') {
@@ -358,9 +363,9 @@ document.addEventListener('click', function (event) {
                         capturingPiece = null;
                     }
                 }
-                unselectPiece();
+                unselectPiece(activeSelectionInterval);
             } else if (activePiece === 'black') {
-                unselectPiece();
+                unselectPiece(activeSelectionInterval);
             }
         } else if (turn === 'black') {
             if (activePiece === 'black' && document.getElementById(event.target.id).innerText === '') {
@@ -383,9 +388,9 @@ document.addEventListener('click', function (event) {
                         capturingPiece = null;
                     }
                 }
-                unselectPiece();
+                unselectPiece(activeSelectionInterval);
             } else if (activePiece === 'white') {
-                unselectPiece();
+                unselectPiece(activeSelectionInterval);
             }
         }
         clearInterval(activeSelectionInterval); // Clear the interval whenever the active piece is reset
