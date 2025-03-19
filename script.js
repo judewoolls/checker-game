@@ -1,6 +1,9 @@
 // The main js script
 /* 
 a. Need to unselect a piece if the player clicks on a different piece - minor fix
+b. spotted an error it forces the same piece to move for the take again move but it
+   doesnt make it make the move that takes the next piece as it should.
+
 
 3. I need to add the logic for when a piece is kinged
 4. I need to add the logic for when a piece is kinged and can take again
@@ -93,7 +96,14 @@ function renderCheckers(board) {
             } else if (board[row][col] && board[row][col][0] === 2) {
                 item.innerText = 'Black';
                 item.style.color = 'Orange';
-            } else {
+            } else if (board[row][col] && board[row][col][0] === 3) {
+                item.innerText = 'KingWhite';
+                item.style.color = 'Orange';
+            } else if (board[row][col] && board[row][col][0] === 4) {
+                item.innerText = 'KingBlack';
+                item.style.color = 'Orange';
+            } 
+            else {
                 item.innerText = '';
             }
             counter++;
@@ -323,6 +333,15 @@ function canTakeAgain(cell, currentTurn) {
     }
 }
 
+function setPieceToKing(piece, position) {
+    if (piece[0] == 1 && position[1] == 7) {
+        piece[0] = 3;
+    } else if (piece[0] == 2 && position[1] == 0) {
+        piece[0] = 4;
+    }
+    return piece;
+}
+
 // Game variables
 let turn = 'white';
 let activePiece = null;
@@ -421,6 +440,11 @@ document.addEventListener('click', function (event) {
                 unselectPiece();
                 displayActivePiece(); // Call displayActivePiece when a piece is unselected
             }
+        }
+        // Check if the piece should be kinged
+        let newPiece = setPieceToKing(piece, findPosition(parseInt(event.target.id)));
+        if (newPiece !== piece) {
+            boardArray[findPosition(parseInt(event.target.id))[1]][findPosition(parseInt(event.target.id))[0]] = newPiece;
         }
         clearInterval(activeSelectionInterval); // Clear the interval whenever the active piece is reset
         displayTurn(turn);
