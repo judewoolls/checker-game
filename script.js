@@ -512,6 +512,30 @@ document.addEventListener('click', function (event) {
             }
             unselectPiece();
             displayActivePiece(); // Call displayActivePiece when a piece is unselected
+        } else if (activePiece === 'KingWhite' && document.getElementById(event.target.id).innerText === '') {
+            // check for valid move
+            moveResult = validKingMove(parseInt(event.target.id), true, 3);
+            if (moveResult) {
+                // change the display
+                document.getElementById(event.target.id).innerText = 'KingWhite';
+                document.getElementById(previousCell).innerText = '';
+                updateArray(event.target.id, turn); // should update array after a move
+                if (moveResult === 'take' && canTakeAgain(parseInt(event.target.id), 'white')) {
+                    console.log('must take again');
+                    mustTakeAgain = true;
+                    capturingPiece = piece[1]; // Track the capturing piece
+                } else {
+                    console.log('switched turn');
+                    turn = 'black';
+                    mustTakeAgain = false;
+                    capturingPiece = null;
+                }
+            }
+            unselectPiece();
+            displayActivePiece(); // Call displayActivePiece when a piece is unselected
+        } else {
+            unselectPiece();
+            displayActivePiece(); // Call displayActivePiece when a piece is unselected
         }
         // Check if the piece should be kinged
         let newPiece = setPieceToKing(piece, findPosition(parseInt(event.target.id)));
