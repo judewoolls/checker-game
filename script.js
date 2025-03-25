@@ -313,6 +313,47 @@ function validWhiteMove(cell, executeMove = true) {
     return false;
 }
 
+function validKingMove(cell, executeMove = true, teamColor) {
+    let startPosition = findPosition(previousCell);
+    let endPosition = findPosition(cell);
+
+    /**
+     * Add the king moves into this function
+     * Check for the positions and the team color
+     * Each time a move is made check for the color of the piece
+     * So the moves will check for the color of the piece and the position
+     * It will check the opposing color and check if the position is empty
+     * It will allow player to move the kingPiece in any diagnal direction
+     * 
+     */
+    if (startPosition[1] - endPosition[1] === startPosition[0] - endPosition[0] || startPosition[1] - endPosition[1] === endPosition[0] - startPosition[0]) {
+        // check for the direction of the move
+        let directionX = endPosition[0] - startPosition[0] > 0 ? 1 : -1;
+        let directionY = endPosition[1] - startPosition[1] > 0 ? 1 : -1;
+        let x = startPosition[0] + directionX;
+        let y = startPosition[1] + directionY;
+        let take = false;
+        while (x !== endPosition[0] && y !== endPosition[1]) {
+            if (boardArray[y][x] !== 0) {
+                // check if the piece is the same color
+                if (boardArray[y][x][0] === teamColor) {
+                    return false;
+                } else {
+                    take = true;
+                }
+            }
+            x += directionX;
+            y += directionY;
+        }
+        if (take) {
+            return 'take';
+        } else {
+            return 'move';
+        }
+    }
+    return false;
+}
+
 // Function to check if the piece can take again
 function canTakeAgain(cell, currentTurn) {
     let [x, y] = findPosition(cell);
@@ -361,10 +402,20 @@ function displayActivePiece() {
     }
 }
 
+function getColor(piece) {
+    if (piece[0] === 1 || piece[0] === 3) {
+        return 'white';
+    }
+    if (piece[0] === 2 || piece[0] === 4) {
+        return 'black';
+    }
+}
+
 // Game logic that is checked whenever there is a click on the screen
 document.addEventListener('click', function (event) {
     if (event.target.classList.contains('cell') && activePiece === null) {
         activePiece = document.getElementById(event.target.id).innerText.toLowerCase();
+        activePiece = getColor(boardArray[findPosition(parseInt(event.target.id))[1]][findPosition(parseInt(event.target.id))[0]]);
         previousCell = parseInt(event.target.id);
         flip = 0;
         if (activePiece === 'white' && turn === 'white') {
@@ -440,6 +491,27 @@ document.addEventListener('click', function (event) {
                 unselectPiece();
                 displayActivePiece(); // Call displayActivePiece when a piece is unselected
             }
+        } else if (activePiece === 'KingBlack' && document.getElementById(event.target.id).innerText === '') {
+            // check for valid move
+            moveResult = validKingMove(parseInt(event.target.id), true, 4);
+            if (moveResult) {
+                // change the display
+                document.getElementById(event.target.id).innerText = 'KingBlack';
+                document.getElementById(previousCell).innerText = '';
+                updateArray(event.target.id, turn); // should update array after a move
+                if (moveResult === 'take' && canTakeAgain(parseInt(event.target.id), 'black')) {
+                    console.log('must take again');
+                    mustTakeAgain = true;
+                    capturingPiece = piece[1]; // Track the capturing piece
+                } else {
+                    console.log('switched turn');
+                    turn = 'white';
+                    mustTakeAgain = false;
+                    capturingPiece = null;
+                }
+            }
+            unselectPiece();
+            displayActivePiece(); // Call displayActivePiece when a piece is unselected
         }
         // Check if the piece should be kinged
         let newPiece = setPieceToKing(piece, findPosition(parseInt(event.target.id)));
