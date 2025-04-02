@@ -66,7 +66,7 @@ function renderCheckers(board) {
             let square = document.getElementById(`${counter}`);
             if (board[row][col] !== 0) {
                 let piece = board[row][col];
-                square.innerHTML = `<div class="piece ${piece.color}">${piece.id}</div>`;
+                square.innerHTML = `<div class="piece ${piece.color}" id="${piece.color.slice(0,1) + piece.id}">${piece.id}</div>`;
             }
             counter++;
         }
@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 
-// Game logic  and functions
+// Game logic and functions
 
 // add query selector to get all the pieces
 function addEventListeners() {
@@ -112,11 +112,18 @@ function addEventListeners() {
     piecesArray.forEach(piece => {
         piece.addEventListener('click', function () {
             console.log('piece clicked');
+            if (piece.id.length === 3) {
+                selectPiece(parseInt(piece.id.slice(-2)));
+            } else{
+                selectPiece(parseInt(piece.id.slice(-1)));
+            }
         });
     });
 }
 
 // add turns and move logic
+
+// chnages the turn
 function changeTurn(turn) {
     if (turn === 'White') {
         return 'Red';
@@ -125,7 +132,21 @@ function changeTurn(turn) {
     }
 }
 
+// displays the current turn
 function displayTurn(turn) {
     let turnDisplay = document.querySelector('#turn');
     turnDisplay.innerHTML = `${turn}'s turn`;
+}
+
+// select a piece to move
+function selectPiece(pieceId) {
+    boardArray.forEach(row => {
+        row.forEach(cell => {
+            if (cell !== 0) {
+                if (cell.id === pieceId) {
+                    console.log(cell);
+                }
+            }
+        });
+    });
 }
