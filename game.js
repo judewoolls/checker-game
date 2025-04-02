@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCheckers(boardArray);
     addEventListeners();
     displayTurn(turn);
-
+    movePiece(pieces[0], 3, 2);
 });
 
 // Game logic and functions
@@ -162,6 +162,8 @@ function selectPiece(pieceId) {
 }
 
 // this will move the position of the piece and display it on the board
+// this function will be called when a piece is selected and a valid move is made
+// it takes the new row and column as arguments
 function movePiece(piece, row, col) {
     let oldRow = piece.row;
     let oldCol = piece.col;
@@ -178,4 +180,5 @@ function movePiece(piece, row, col) {
 
     // Re-render the board
     renderCheckers(boardArray);
+    addEventListeners();  // need to be added after each move
 }
