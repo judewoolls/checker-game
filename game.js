@@ -1,3 +1,4 @@
+// Game set up and set up functions
 const boardHeight = 8;
 const boardWidth = 8;
 const numOfCells = boardHeight * boardWidth;
@@ -78,6 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let board = document.querySelector('#board');
     let color = 'white';
     let grid = ``;
+    let turn = 'White';
     for (let i = 0; i < numOfCells; i++) {
         grid += `<div class="${color} cell" id="${i}"></div>`;
         if (color === 'white') {
@@ -97,4 +99,33 @@ document.addEventListener('DOMContentLoaded', () => {
     boardArray = setUpBoardArray(boardHeight, boardWidth);
     populateBoard(boardArray);
     renderCheckers(boardArray);
+    addEventListeners();
+    displayTurn(turn);
+
 });
+
+// Game logic  and functions
+
+// add query selector to get all the pieces
+function addEventListeners() {
+    let piecesArray = document.querySelectorAll('.piece');
+    piecesArray.forEach(piece => {
+        piece.addEventListener('click', function () {
+            console.log('piece clicked');
+        });
+    });
+}
+
+// add turns and move logic
+function changeTurn(turn) {
+    if (turn === 'White') {
+        return 'Red';
+    } else {
+        return 'White';
+    }
+}
+
+function displayTurn(turn) {
+    let turnDisplay = document.querySelector('#turn');
+    turnDisplay.innerHTML = `${turn}'s turn`;
+}
