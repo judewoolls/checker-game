@@ -41,7 +41,7 @@ function populateWhite(board, i, j) {
 }
 
 // Sets up black checkers
-function populateBlack(board, i, j) {
+function populateRed(board, i, j) {
     if (i === 5 && j % 2 !== 1) {
         board[i][j] = { color: 'red', king: false, id: pieceCounter++, row: i, col: j };
         pieces.push(board[i][j]);
@@ -59,7 +59,7 @@ function populateBoard(board) {
     for (let i = 0; i < boardHeight; i++) {
         for (let j = 0; j < boardWidth; j++) {
             populateWhite(board, i, j);
-            populateBlack(board, i, j);
+            populateRed(board, i, j);
         }
     }
 }
@@ -111,7 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
     addEventListeners();
     displayTurn(turn);
     addEventListenersCells();
-    movePiece(pieces[0], 3, 2);
 });
 
 // Game logic and functions
@@ -126,6 +125,15 @@ function addEventListeners() {
                 selectPiece(parseInt(piece.id.slice(-2)));
             } else{
                 selectPiece(parseInt(piece.id.slice(-1)));
+            }
+            let pieceId = parseInt(piece.id.slice(-2)) || parseInt(piece.id.slice(-1)); // check if the piece id is 2 or 1 digit
+            // we checked the last two digits first because it could be 3 digits but has to be 2 digits
+            let selectedPiece = pieces.find(piece => piece.id === pieceId);
+            if (selectedPiece) {
+                console.log(selectedPiece.color + ' ' + selectedPiece.id);
+                calculatePossibleMoves(selectedPiece);
+            } else {
+                console.log('No piece found');
             }
         });
     });
@@ -203,12 +211,39 @@ function movePiece(piece, row, col) {
 }
 
 // check if the move is valid
-function checkValidMove(piece, row, col) {
-    let oldRow = piece.row;
-    let oldCol = piece.col;
-    let newRow = row;
-    let newCol = col;
-
-    // Check if the new position is empty
-
+function calculatePossibleMoves(piece) {
+    let rows = piece.row;
+    let columns = piece.col;
+    let possibleMoves = [];
+    console.log('calculating possible moves' + piece.color);
+    // check if the move is valid
+    if (piece.king === true) {
+        // do king moves later
+    } else {
+        if (piece.color === 'white') {
+            if (rows < 7 && columns > 0) {
+                if (boardArray[rows + 1][columns - 1] === 0) {
+                    possibleMoves.push([rows + 1, columns - 1]);
+                }
+            }
+            if (rows < 7 && columns < 7) {
+                if (boardArray[rows + 1][columns + 1] === 0) {
+                    possibleMoves.push([rows + 1, columns + 1]);
+                }
+            }
+        } else if (piece.color === 'red') {
+            console.log('red');
+            if (rows > 0 && columns > 0) {
+                if (boardArray[rows - 1][columns - 1] === 0) {
+                    possibleMoves.push([rows - 1, columns - 1]);
+                }
+            }
+            if (rows > 0 && columns < 7) {
+                if (boardArray[rows - 1][columns + 1] === 0) {
+                    possibleMoves.push([rows - 1, columns + 1]);
+                }
+            }
+        }
+    }
+    console.log(possibleMoves);
 }
