@@ -19,16 +19,23 @@ function setUpBoardArray(height, width) {
     return board;
 }
 
+// to find the position in the array
+function findPosition(cell) {
+    let x = cell % 8;
+    let y = Math.floor(cell / 8);
+    return [x, y];
+}
+
 // Sets up white checkers
 function populateWhite(board, i, j) {
     if (i === 0 && j % 2 !== 0) {
-        board[i][j] = { color: 'white', king: false, id: pieceCounter++ };
+        board[i][j] = { color: 'white', king: false, id: pieceCounter++, row: i, col: j };
         pieces.push(board[i][j]);
     } else if (i === 1 && j % 2 !== 1) {
-        board[i][j] = { color: 'white', king: false, id: pieceCounter++ };
+        board[i][j] = { color: 'white', king: false, id: pieceCounter++, row: i, col: j };
         pieces.push(board[i][j]);
     } else if (i === 2 && j % 2 !== 0) {
-        board[i][j] = { color: 'white', king: false, id: pieceCounter++ };
+        board[i][j] = { color: 'white', king: false, id: pieceCounter++, row: i, col: j };
         pieces.push(board[i][j]);
     }
 }
@@ -36,13 +43,13 @@ function populateWhite(board, i, j) {
 // Sets up black checkers
 function populateBlack(board, i, j) {
     if (i === 5 && j % 2 !== 1) {
-        board[i][j] = { color: 'red', king: false, id: pieceCounter++ };
+        board[i][j] = { color: 'red', king: false, id: pieceCounter++, row: i, col: j };
         pieces.push(board[i][j]);
     } else if (i === 6 && j % 2 !== 0) {
-        board[i][j] = { color: 'red', king: false, id: pieceCounter++ };
+        board[i][j] = { color: 'red', king: false, id: pieceCounter++, row: i, col: j };
         pieces.push(board[i][j]);
     } else if (i === 7 && j % 2 !== 1) {
-        board[i][j] = { color: 'red', king: false, id: pieceCounter++ };
+        board[i][j] = { color: 'red', king: false, id: pieceCounter++, row: i, col: j };
         pieces.push(board[i][j]);
     }
 }
@@ -67,6 +74,8 @@ function renderCheckers(board) {
             if (board[row][col] !== 0) {
                 let piece = board[row][col];
                 square.innerHTML = `<div class="piece ${piece.color}" id="${piece.color.slice(0,1) + piece.id}">${piece.id}</div>`;
+            } else {
+                square.innerHTML = '';
             }
             counter++;
         }
@@ -145,8 +154,28 @@ function selectPiece(pieceId) {
             if (cell !== 0) {
                 if (cell.id === pieceId) {
                     console.log(cell);
+                    document.getElementById(`${cell.color.slice(0,1) + cell.id}`).classList.toggle('selected');
                 }
             }
         });
     });
+}
+
+// this will move the position of the piece and display it on the board
+function movePiece(piece, row, col) {
+    let oldRow = piece.row;
+    let oldCol = piece.col;
+
+    // Clear the old position in the board array
+    boardArray[oldRow][oldCol] = 0;
+
+    // Update the piece's position
+    piece.row = row;
+    piece.col = col;
+
+    // Move the piece to the new position in the board array
+    boardArray[row][col] = piece;
+
+    // Re-render the board
+    renderCheckers(boardArray);
 }

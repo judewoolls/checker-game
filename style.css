@@ -61,3 +61,6 @@ div {
     display: none;
 }
 
+.selected {
+    box-shadow: 0px 0px 10px gold;
+}
