@@ -110,6 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCheckers(boardArray);
     addEventListeners();
     displayTurn(turn);
+    addEventListenersCells();
     movePiece(pieces[0], 3, 2);
 });
 
@@ -128,6 +129,24 @@ function addEventListeners() {
             }
         });
     });
+}
+
+function addEventListenersCells() {
+    document.querySelectorAll('.cell').forEach(cell => {
+        if (!cell.innerHTML) {
+            cell.addEventListener('click', function () {
+                console.log('cell clicked');
+            });
+        }
+    })
+}
+
+function removeEventListenersCells() {
+    document.querySelectorAll('.cell').forEach(cell => {
+        cell.removeEventListener('click', function () {
+            console.log('cell clicked');
+        });
+    })
 }
 
 // add turns and move logic
@@ -181,4 +200,15 @@ function movePiece(piece, row, col) {
     // Re-render the board
     renderCheckers(boardArray);
     addEventListeners();  // need to be added after each move
+}
+
+// check if the move is valid
+function checkValidMove(piece, row, col) {
+    let oldRow = piece.row;
+    let oldCol = piece.col;
+    let newRow = row;
+    let newCol = col;
+
+    // Check if the new position is empty
+
 }
