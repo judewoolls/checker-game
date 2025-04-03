@@ -223,27 +223,28 @@ function calculatePossibleMoves(piece) {
         if (piece.color === 'white') {
             if (rows < 7 && columns > 0) {
                 if (boardArray[rows + 1][columns - 1] === 0) {
-                    possibleMoves.push([rows + 1, columns - 1]);
+                    possibleMoves.push({position: [rows + 1, columns - 1], take: false});
                 }
             }
             if (rows < 7 && columns < 7) {
                 if (boardArray[rows + 1][columns + 1] === 0) {
-                    possibleMoves.push([rows + 1, columns + 1]);
+                    possibleMoves.push({position: [rows + 1, columns + 1], take: false});
                 }
             }
         } else if (piece.color === 'red') {
             console.log('red');
             if (rows > 0 && columns > 0) {
                 if (boardArray[rows - 1][columns - 1] === 0) {
-                    possibleMoves.push([rows - 1, columns - 1]);
+                    possibleMoves.push({position: [rows - 1, columns - 1], take: false});
                 }
             }
             if (rows > 0 && columns < 7) {
                 if (boardArray[rows - 1][columns + 1] === 0) {
-                    possibleMoves.push([rows - 1, columns + 1]);
+                    possibleMoves.push({position: [rows - 1, columns + 1], take: false});
                 }
             }
         }
     }
     console.log(possibleMoves);
+    return possibleMoves;
 }
