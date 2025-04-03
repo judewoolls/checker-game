@@ -5,6 +5,7 @@ const numOfCells = boardHeight * boardWidth;
 let boardArray = [];
 let pieces = []; // Array to store pieces
 let pieceCounter = 0; // Counter to assign unique identifiers to pieces
+let turn = 'white'; // Variable to keep track of the current turn
 
 // sets up the initial empty board array
 function setUpBoardArray(height, width) {
@@ -88,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let board = document.querySelector('#board');
     let color = 'white';
     let grid = ``;
-    let turn = 'White';
+    turn = 'white';
     for (let i = 0; i < numOfCells; i++) {
         grid += `<div class="${color} cell" id="${i}"></div>`;
         if (color === 'white') {
@@ -161,17 +162,17 @@ function removeEventListenersCells() {
 
 // chnages the turn
 function changeTurn(turn) {
-    if (turn === 'White') {
-        return 'Red';
+    if (turn === 'white') {
+        return 'red';
     } else {
-        return 'White';
+        return 'white';
     }
 }
 
 // displays the current turn
 function displayTurn(turn) {
     let turnDisplay = document.querySelector('#turn');
-    turnDisplay.innerHTML = `${turn}'s turn`;
+    turnDisplay.innerHTML = `${turn.slice(0,1).toUpperCase() + turn.slice(1, turn.length)}'s turn`;
 }
 
 // select a piece to move
@@ -179,7 +180,7 @@ function DisplaySelectPiece(pieceId) {
     boardArray.forEach(row => {
         row.forEach(cell => {
             if (cell !== 0) {
-                if (cell.id === pieceId) {
+                if (cell.id === pieceId && cell.color === turn) {
                     console.log(cell);
                     // used to toggle the highlight of the un/selected piece
                     const item = document.getElementById(`${cell.color.slice(0,1) + cell.id}`).classList.toggle('selected');
