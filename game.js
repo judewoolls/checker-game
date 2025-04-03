@@ -17,6 +17,16 @@ const gameState = {
     possibleMoves: []
 };
 
+// function to updte the game state
+function updateGameState(board, turn, selectedPiece, possibleMoves) {
+    return {
+        board: board, // Consider deep copying if needed
+        turn: turn,
+        selectedPiece: selectedPiece,
+        possibleMoves: possibleMoves
+    };
+}
+
 
 // sets up the initial empty board array
 function setUpBoardArray(height, width) {
