@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let board = document.querySelector('#board');
     let color = 'white';
     let grid = ``;
-    turn = 'white';
+    turn = 'red';
     for (let i = 0; i < numOfCells; i++) {
         grid += `<div class="${color} cell" id="${i}"></div>`;
         if (color === 'white') {
@@ -132,7 +132,7 @@ function addEventListeners() {
             let selectedPiece = pieces.find(piece => piece.id === pieceId);
             if (selectedPiece) {
                 console.log(selectedPiece.color + ' ' + selectedPiece.id);
-                calculatePossibleMoves(selectedPiece);
+                calculatePossibleMoves(selectedPiece) === 0 ? console.log('No possible moves') : displayPossibleMoves(calculatePossibleMoves(selectedPiece));
             } else {
                 console.log('No piece found');
             }
@@ -287,24 +287,41 @@ function calculatePossibleMoves(piece) {
     let columns = piece.col;
     let possibleMoves = [];
     console.log('calculating possible moves' + piece.color);
-    // check if the move is valid
+
     if (piece.king === true) {
         // do king moves later
     } else {
         if (piece.color === 'white') {
-            possibleMoves.push(checkForPossibleWhiteTake(piece, rows, columns));
-            // check that the piece can't take
+            // Concatenate the results instead of pushing arrays
+            possibleMoves = possibleMoves.concat(checkForPossibleWhiteTake(piece, rows, columns));
             if (possibleMoves.length === 0) {
-                possibleMoves.push(basicWhiteMoves(piece, rows, columns));
+                possibleMoves = possibleMoves.concat(basicWhiteMoves(piece, rows, columns));
             }
         } else if (piece.color === 'red') {
-            possibleMoves.push(checkForPossibleRedTake(piece, rows, columns));
-            // check that the piece can't take
+            // Concatenate the results instead of pushing arrays
+            possibleMoves = possibleMoves.concat(checkForPossibleRedTake(piece, rows, columns));
             if (possibleMoves.length === 0) {
-                possibleMoves.push(basicRedMoves(piece, rows, columns));
+                possibleMoves = possibleMoves.concat(basicRedMoves(piece, rows, columns));
             }
         }
     }
-    console.log(possibleMoves);  // used for debugging
+
+    console.log(possibleMoves); // Debugging
     return possibleMoves;
+}
+
+
+// after calculating the possible moves, we will display them on the board
+function displayPossibleMoves(possibleMoves) {
+    possibleMoves.forEach(move => {
+        let cell = document.getElementById(`${move.position[0] * 8 + move.position[1]}`);
+        cell.classList.add('possible-move');
+        cell.addEventListener('click', function () {
+            movePiece(move.piece, move.position[0], move.position[1]);
+            turn = changeTurn(turn);
+            displayTurn(turn);
+            removeEventListenersCells();
+            addEventListeners();
+        });
+    });
 }
