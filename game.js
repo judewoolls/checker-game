@@ -229,6 +229,22 @@ function basicWhiteMoves(piece,row, col) {
     return possibleMoves;
 }
 
+function checkForPossibleWhiteTake(piece, row, col) {
+    let rows = piece.row;
+    let columns = piece.col;
+    let possibleMoves = [];
+    if (rows < 6 && columns > 1) {
+        if (boardArray[rows + 1][columns - 1].color === 'red' && boardArray[rows + 2][columns - 2] === 0) {
+            possibleMoves.push({position: [rows + 2, columns - 2], take: true});
+        }
+    } else if (rows < 6 && columns < 6) {
+        if (boardArray[rows + 1][columns + 1].color === 'red' && boardArray[rows + 2][columns + 2] === 0) {
+            possibleMoves.push({position: [rows + 2, columns + 2], take: true});
+        }
+    }
+    return possibleMoves;
+}
+
 // functoin for red moves
 function basicRedMoves(piece, row, col) {
     let rows = piece.row;
@@ -247,6 +263,22 @@ function basicRedMoves(piece, row, col) {
     return possibleMoves;
 }
 
+function checkForPossibleRedTake(piece, row, col) {
+    let rows = piece.row;
+    let columns = piece.col;
+    let possibleMoves = [];
+    if (rows > 1 && columns > 1) {
+        if (boardArray[rows - 1][columns - 1].color === 'white' && boardArray[rows - 2][columns - 2] === 0) {
+            possibleMoves.push({position: [rows - 2, columns - 2], take: true});
+        }
+    } else if (rows > 1 && columns < 6) {
+        if (boardArray[rows - 1][columns + 1].color === 'white' && boardArray[rows - 2][columns + 2] === 0) {
+            possibleMoves.push({position: [rows - 2, columns + 2], take: true});
+        }
+    }
+    return possibleMoves;
+}
+
 // check if the move is valid
 function calculatePossibleMoves(piece) {
     let rows = piece.row;
@@ -258,9 +290,15 @@ function calculatePossibleMoves(piece) {
         // do king moves later
     } else {
         if (piece.color === 'white') {
-            possibleMoves.push(basicWhiteMoves(piece, rows, columns));
+            possibleMoves.push(checkForPossibleWhiteTake(piece, rows, columns));
+            if (possibleMoves.length === 0) {
+                possibleMoves.push(basicWhiteMoves(piece, rows, columns));
+            }
         } else if (piece.color === 'red') {
-            possibleMoves.push(basicRedMoves(piece, rows, columns));
+            possibleMoves.push(checkForPossibleRedTake(piece, rows, columns));
+            if (possibleMoves.length === 0) {
+                possibleMoves.push(basicRedMoves(piece, rows, columns));
+            }
         }
     }
     console.log(possibleMoves);
