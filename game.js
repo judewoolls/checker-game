@@ -122,9 +122,9 @@ function addEventListeners() {
         piece.addEventListener('click', function () {
             console.log('piece clicked');
             if (piece.id.length === 3) {
-                selectPiece(parseInt(piece.id.slice(-2)));
+                DisplaySelectPiece(parseInt(piece.id.slice(-2)));
             } else{
-                selectPiece(parseInt(piece.id.slice(-1)));
+                DisplaySelectPiece(parseInt(piece.id.slice(-1)));
             }
             let pieceId = parseInt(piece.id.slice(-2)) || parseInt(piece.id.slice(-1)); // check if the piece id is 2 or 1 digit
             // we checked the last two digits first because it could be 3 digits but has to be 2 digits
@@ -175,13 +175,14 @@ function displayTurn(turn) {
 }
 
 // select a piece to move
-function selectPiece(pieceId) {
+function DisplaySelectPiece(pieceId) {
     boardArray.forEach(row => {
         row.forEach(cell => {
             if (cell !== 0) {
                 if (cell.id === pieceId) {
                     console.log(cell);
-                    document.getElementById(`${cell.color.slice(0,1) + cell.id}`).classList.toggle('selected');
+                    // used to toggle the highlight of the un/selected piece
+                    const item = document.getElementById(`${cell.color.slice(0,1) + cell.id}`).classList.toggle('selected');
                 }
             }
         });
@@ -291,16 +292,18 @@ function calculatePossibleMoves(piece) {
     } else {
         if (piece.color === 'white') {
             possibleMoves.push(checkForPossibleWhiteTake(piece, rows, columns));
+            // check that the piece can't take
             if (possibleMoves.length === 0) {
                 possibleMoves.push(basicWhiteMoves(piece, rows, columns));
             }
         } else if (piece.color === 'red') {
             possibleMoves.push(checkForPossibleRedTake(piece, rows, columns));
+            // check that the piece can't take
             if (possibleMoves.length === 0) {
                 possibleMoves.push(basicRedMoves(piece, rows, columns));
             }
         }
     }
-    console.log(possibleMoves);
+    console.log(possibleMoves);  // used for debugging
     return possibleMoves;
 }
