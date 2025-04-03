@@ -7,6 +7,17 @@ let pieces = []; // Array to store pieces
 let pieceCounter = 0; // Counter to assign unique identifiers to pieces
 let turn = 'white'; // Variable to keep track of the current turn
 
+// this is the game state object
+// it will be used to keep track of the game state
+// it will be used to store the board, the turn, the selected piece and the possible moves
+const gameState = {
+    board: [],
+    turn: 'white',
+    selectedPiece: null,
+    possibleMoves: []
+};
+
+
 // sets up the initial empty board array
 function setUpBoardArray(height, width) {
     let board = [];
