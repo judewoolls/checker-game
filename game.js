@@ -210,6 +210,43 @@ function movePiece(piece, row, col) {
     addEventListeners();  // need to be added after each move
 }
 
+
+// function check white moves
+function basicWhiteMoves(piece,row, col) {
+    let rows = piece.row;
+    let columns = piece.col;
+    let possibleMoves = [];
+    if (rows < 7 && columns > 0) {
+        if (boardArray[rows + 1][columns - 1] === 0) {
+            possibleMoves.push({position: [rows + 1, columns - 1], take: false});
+        }
+    }
+    if (rows < 7 && columns < 7) {
+        if (boardArray[rows + 1][columns + 1] === 0) {
+            possibleMoves.push({position: [rows + 1, columns + 1], take: false});
+        }
+    }
+    return possibleMoves;
+}
+
+// functoin for red moves
+function basicRedMoves(piece, row, col) {
+    let rows = piece.row;
+    let columns = piece.col;
+    let possibleMoves = [];
+    if (rows > 0 && columns > 0) {
+        if (boardArray[rows - 1][columns - 1] === 0) {
+            possibleMoves.push({position: [rows - 1, columns - 1], take: false});
+        }
+    }
+    if (rows > 0 && columns < 7) {
+        if (boardArray[rows - 1][columns + 1] === 0) {
+            possibleMoves.push({position: [rows - 1, columns + 1], take: false});
+        }
+    }
+    return possibleMoves;
+}
+
 // check if the move is valid
 function calculatePossibleMoves(piece) {
     let rows = piece.row;
@@ -221,28 +258,9 @@ function calculatePossibleMoves(piece) {
         // do king moves later
     } else {
         if (piece.color === 'white') {
-            if (rows < 7 && columns > 0) {
-                if (boardArray[rows + 1][columns - 1] === 0) {
-                    possibleMoves.push({position: [rows + 1, columns - 1], take: false});
-                }
-            }
-            if (rows < 7 && columns < 7) {
-                if (boardArray[rows + 1][columns + 1] === 0) {
-                    possibleMoves.push({position: [rows + 1, columns + 1], take: false});
-                }
-            }
+            possibleMoves.push(basicWhiteMoves(piece, rows, columns));
         } else if (piece.color === 'red') {
-            console.log('red');
-            if (rows > 0 && columns > 0) {
-                if (boardArray[rows - 1][columns - 1] === 0) {
-                    possibleMoves.push({position: [rows - 1, columns - 1], take: false});
-                }
-            }
-            if (rows > 0 && columns < 7) {
-                if (boardArray[rows - 1][columns + 1] === 0) {
-                    possibleMoves.push({position: [rows - 1, columns + 1], take: false});
-                }
-            }
+            possibleMoves.push(basicRedMoves(piece, rows, columns));
         }
     }
     console.log(possibleMoves);
