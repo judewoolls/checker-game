@@ -246,15 +246,29 @@ function checkForPossibleWhiteTake(piece, row, col) {
     let rows = piece.row;
     let columns = piece.col;
     let possibleMoves = [];
+
+    // Check for possible take to the left
     if (rows < 6 && columns > 1) {
-        if (boardArray[rows + 1][columns - 1].color === 'red' && boardArray[rows + 2][columns - 2] === 0) {
-            possibleMoves.push({position: [rows + 2, columns - 2], take: true});
-        }
-    } else if (rows < 6 && columns < 6) {
-        if (boardArray[rows + 1][columns + 1].color === 'red' && boardArray[rows + 2][columns + 2] === 0) {
-            possibleMoves.push({position: [rows + 2, columns + 2], take: true});
+        if (
+            boardArray[rows + 1][columns - 1] !== 0 && // Ensure the cell is not empty
+            boardArray[rows + 1][columns - 1].color === 'red' && // Check if the piece is red
+            boardArray[rows + 2][columns - 2] === 0 // Check if the landing spot is empty
+        ) {
+            possibleMoves.push({ position: [rows + 2, columns - 2], take: true });
         }
     }
+
+    // Check for possible take to the right
+    if (rows < 6 && columns < 6) {
+        if (
+            boardArray[rows + 1][columns + 1] !== 0 && // Ensure the cell is not empty
+            boardArray[rows + 1][columns + 1].color === 'red' && // Check if the piece is red
+            boardArray[rows + 2][columns + 2] === 0 // Check if the landing spot is empty
+        ) {
+            possibleMoves.push({ position: [rows + 2, columns + 2], take: true });
+        }
+    }
+
     return possibleMoves;
 }
 
@@ -280,15 +294,29 @@ function checkForPossibleRedTake(piece, row, col) {
     let rows = piece.row;
     let columns = piece.col;
     let possibleMoves = [];
+
+    // Check for possible take to the left
     if (rows > 1 && columns > 1) {
-        if (boardArray[rows - 1][columns - 1].color === 'white' && boardArray[rows - 2][columns - 2] === 0) {
-            possibleMoves.push({position: [rows - 2, columns - 2], take: true});
-        }
-    } else if (rows > 1 && columns < 6) {
-        if (boardArray[rows - 1][columns + 1].color === 'white' && boardArray[rows - 2][columns + 2] === 0) {
-            possibleMoves.push({position: [rows - 2, columns + 2], take: true});
+        if (
+            boardArray[rows - 1][columns - 1] !== 0 && // Ensure the cell is not empty
+            boardArray[rows - 1][columns - 1].color === 'white' && // Check if the piece is white
+            boardArray[rows - 2][columns - 2] === 0 // Check if the landing spot is empty
+        ) {
+            possibleMoves.push({ position: [rows - 2, columns - 2], take: true });
         }
     }
+
+    // Check for possible take to the right
+    if (rows > 1 && columns < 6) {
+        if (
+            boardArray[rows - 1][columns + 1] !== 0 && // Ensure the cell is not empty
+            boardArray[rows - 1][columns + 1].color === 'white' && // Check if the piece is white
+            boardArray[rows - 2][columns + 2] === 0 // Check if the landing spot is empty
+        ) {
+            possibleMoves.push({ position: [rows - 2, columns + 2], take: true });
+        }
+    }
+
     return possibleMoves;
 }
 
@@ -302,13 +330,15 @@ function calculatePossibleMoves(piece) {
     if (piece.king === true) {
         // do king moves later
     } else {
-        if (piece.color === 'white') {
+        if (piece.color === 'white' && turn === 'white') {
+            // Check for possible take first
             // Concatenate the results instead of pushing arrays
             possibleMoves = possibleMoves.concat(checkForPossibleWhiteTake(piece, rows, columns));
             if (possibleMoves.length === 0) {
                 possibleMoves = possibleMoves.concat(basicWhiteMoves(piece, rows, columns));
             }
-        } else if (piece.color === 'red') {
+        } else if (piece.color === 'red' && turn === 'red') {
+            // Check for possible take first
             // Concatenate the results instead of pushing arrays
             possibleMoves = possibleMoves.concat(checkForPossibleRedTake(piece, rows, columns));
             if (possibleMoves.length === 0) {
@@ -327,12 +357,5 @@ function displayPossibleMoves(possibleMoves) {
     possibleMoves.forEach(move => {
         let cell = document.getElementById(`${move.position[0] * 8 + move.position[1]}`);
         cell.classList.add('possible-move');
-        cell.addEventListener('click', function () {
-            movePiece(move.piece, move.position[0], move.position[1]);
-            turn = changeTurn(turn);
-            displayTurn(turn);
-            removeEventListenersCells();
-            addEventListeners();
         });
-    });
-}
+};
