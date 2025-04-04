@@ -370,6 +370,13 @@ function displayPossibleMoves(possibleMoves) {
         });
 };
 
+// used to stop displaying possible moves
+function removePossibleMoves() {
+    document.querySelectorAll('.cell').forEach(cell => {
+        cell.classList.remove('possible-move');
+    });
+}
+
 
 // once the possible moves have been displayed, we will remove all event listeners from the cells
 // then we will add event listeners to the cells that are possible moves
