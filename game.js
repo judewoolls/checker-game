@@ -369,3 +369,24 @@ function displayPossibleMoves(possibleMoves) {
         cell.classList.add('possible-move');
         });
 };
+
+
+// once the possible moves have been displayed, we will remove all event listeners from the cells
+// then we will add event listeners to the cells that are possible moves
+// or keep event listeners for other pieces
+function removeEventListeners() {
+    let piecesArray = document.querySelectorAll('.piece');
+    piecesArray.forEach(piece => {
+        piece.removeEventListener('click', function () {
+            console.log('piece clicked');
+        });
+    });
+}
+// remove event listeners from the cells
+function removeEventListenersCells() {
+    document.querySelectorAll('.cell').forEach(cell => {
+        cell.removeEventListener('click', function () {
+            console.log('cell clicked');
+        });
+    })
+}
